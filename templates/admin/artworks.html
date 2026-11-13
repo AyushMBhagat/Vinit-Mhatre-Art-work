@@ -1,0 +1,107 @@
+{% extends "admin/base_admin.html" %}
+
+{% block page_title %}Manage Artworks & Catalog{% endblock %}
+
+{% block admin_content %}
+<div class="admin-card">
+  <div class="admin-card-header" style="flex-wrap: wrap; gap: 16px;">
+    <div>
+      <h3 class="admin-card-title">Catalog Items ({{ artworks|length }})</h3>
+      <small style="color: var(--admin-text-muted);">Add, edit, or remove artworks showcased on the website</small>
+    </div>
+
+    <div style="display: flex; gap: 12px; align-items: center;">
+      <!-- Category Filter -->
+      <form action="{{ url_for('admin_artworks') }}" method="GET" style="display: flex; gap: 8px;">
+        <select name="category" class="admin-select" style="padding: 6px 12px; font-size: 0.85rem;" onchange="this.form.submit()">
+          <option value="all">All Categories</option>
+          {% for cat in artwork_categories %}
+            <option value="{{ cat }}" {% if selected_category == cat %}selected{% endif %}>{{ cat }}</option>
+          {% endfor %}
+        </select>
+      </form>
+
+      <a href="{{ url_for('admin_artwork_new') }}" class="admin-btn admin-btn-primary">
+        + Add New Artwork
+      </a>
+    </div>
+  </div>
+
+  <div class="admin-table-responsive">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Preview</th>
+          <th>Title</th>
+          <th>Category</th>
+          <th>Medium / Dimensions</th>
+          <th>Price</th>
+          <th>Status</th>
+          <th>Featured</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if artworks %}
+          {% for art in artworks %}
+            <tr>
+              <td style="width: 70px;">
+                <div style="width: 56px; height: 56px; border-radius: 6px; overflow: hidden; border: 1px solid var(--admin-border); background: #eee;">
+                  <img src="{{ url_for('static', filename='images/' + art.image_path) if not art.image_path.startswith('uploads/') else url_for('static', filename=art.image_path) }}" 
+                       alt="{{ art.title }}" 
+                       style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+              </td>
+              <td>
+                <b>{{ art.title }}</b>
+              </td>
+              <td>
+                <span class="badge badge-terracotta">{{ art.category }}</span>
+              </td>
+              <td>
+                <small style="display: block; color: var(--admin-text-main);">{{ art.medium or 'N/A' }}</small>
+                <small style="color: var(--admin-text-muted);">{{ art.dimensions or 'Custom' }}</small>
+              </td>
+              <td>
+                <b style="color: var(--admin-primary);">₹{{ "{:,.0f}".format(art.price) }}</b>
+              </td>
+              <td>
+                {% if art.is_available %}
+                  <span class="status-pill status-ready">Available</span>
+                {% else %}
+                  <span class="status-pill status-cancelled">Hidden</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if art.is_featured %}
+                  <span style="color: #F59E0B; font-weight: 700;">&#9733; Yes</span>
+                {% else %}
+                  <span style="color: var(--admin-text-muted);">&mdash;</span>
+                {% endif %}
+              </td>
+              <td>
+                <div style="display: flex; gap: 6px;">
+                  <a href="{{ url_for('admin_artwork_edit', artwork_id=art.id) }}" class="admin-btn admin-btn-secondary" style="font-size: 0.78rem; padding: 4px 10px;">
+                    Edit
+                  </a>
+                  <form action="{{ url_for('admin_artwork_delete', artwork_id=art.id) }}" method="POST" style="display: inline;">
+                    <button type="submit" class="admin-btn admin-btn-danger btn-confirm-delete" style="font-size: 0.78rem; padding: 4px 10px;">
+                      Delete
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        {% else %}
+          <tr>
+            <td colspan="8" style="text-align: center; color: var(--admin-text-muted); padding: 40px;">
+              No artworks found in this category. Click "+ Add New Artwork" to add one.
+            </td>
+          </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

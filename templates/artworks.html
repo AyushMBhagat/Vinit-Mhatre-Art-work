@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('artworks_title') }} {{ _('artworks_title_span') }} | Vinit Mhatre{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 50px; padding-bottom: 80px;">
+  <!-- Header -->
+  <div style="text-align: center; margin-bottom: 40px;">
+    <span class="eyebrow">{{ _('artworks_eyebrow') }}</span>
+    <h1 class="section-title">{{ _('artworks_title') }} <span>{{ _('artworks_title_span') }}</span></h1>
+    <p class="section-lead" style="margin: 0 auto;">
+      {{ _('artworks_lead') }}
+    </p>
+  </div>
+
+  <!-- Search & Filter Controls -->
+  <div style="display: flex; flex-direction: column; gap: 20px; margin-bottom: 40px;">
+    <!-- Category Pills (Dynamic from Database) -->
+    <div class="filter-bar" style="justify-content: center; flex-wrap: wrap;">
+      <a href="{{ url_for('artworks', category='all', search=search_query) }}" 
+         class="filter-pill {% if selected_category == 'all' %}active{% endif %}">
+        {{ _('artworks_all') }}
+      </a>
+      {% for cat in all_categories %}
+        <a href="{{ url_for('artworks', category=cat.name, search=search_query) }}" 
+           class="filter-pill {% if selected_category == cat.name %}active{% endif %}">
+          {{ cat.icon }} {{ cat.name }}
+        </a>
+      {% endfor %}
+    </div>
+
+    <!-- Search Form -->
+    <form action="{{ url_for('artworks') }}" method="GET" style="max-width: 500px; margin: 0 auto; width: 100%; display: flex; gap: 10px;">
+      <input type="hidden" name="category" value="{{ selected_category }}">
+      <input type="text" name="search" class="form-control" placeholder="{{ _('artworks_search_placeholder') }}" value="{{ search_query }}">
+      <button type="submit" class="btn btn-primary btn-sm" style="flex-shrink: 0; padding: 0 20px;">{{ _('artworks_search_btn') }}</button>
+      {% if search_query %}
+        <a href="{{ url_for('artworks', category=selected_category) }}" class="btn btn-secondary btn-sm" style="flex-shrink: 0; padding: 0 16px;">{{ _('artworks_reset_btn') }}</a>
+      {% endif %}
+    </form>
+  </div>
+
+  <!-- Artworks Grid -->
+  {% if artworks %}
+    <div class="artwork-grid">
+      {% for art in artworks %}
+        <article class="artwork-card">
+          <div class="artwork-image-wrap">
+            <img src="{{ url_for('static', filename='images/' + art.image_path) if not art.image_path.startswith('uploads/') else url_for('static', filename=art.image_path) }}" alt="{{ art.title }}">
+            <span class="artwork-category-badge">{{ art.category }}</span>
+          </div>
+          <div class="artwork-card-body">
+            <h3>{{ art.title }}</h3>
+            <div class="artwork-meta">
+              <span>&#128207; {{ art.dimensions }}</span>
+              <span>&bull;</span>
+              <span>&#127912; {{ art.medium }}</span>
+            </div>
+            <p>{{ art.description }}</p>
+            <div class="artwork-footer">
+              <div class="artwork-price">
+                {% if art.show_price and art.price > 0 %}
+                  <span>{{ _('price_starting_from') }}</span>
+                  <b>₹{{ "{:,.0f}".format(art.price) }}</b>
+                {% else %}
+                  <span class="badge-price-request">{{ _('price_on_request') }}</span>
+                {% endif %}
+              </div>
+              <div class="artwork-actions">
+                <a href="{{ url_for('artwork_detail', artwork_id=art.id) }}" class="btn btn-secondary btn-sm">{{ _('btn_details') }}</a>
+                <a href="{{ url_for('custom_order', category=art.category, artwork_id=art.id) }}" class="btn btn-primary btn-sm">{{ _('btn_order_now') }}</a>
+              </div>
+            </div>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div style="text-align: center; padding: 60px 20px; background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border-subtle); max-width: 600px; margin: 0 auto;">
+      <div style="font-size: 3rem; margin-bottom: 16px; color: var(--accent-terracotta);">&#127912;</div>
+      <h3 style="font-size: 1.5rem; margin-bottom: 10px;">{{ _('artworks_empty_title') }}</h3>
+      <p style="color: var(--text-muted); margin-bottom: 24px;">
+        {{ _('artworks_empty_desc') }}
+      </p>
+      <a href="{{ url_for('artworks') }}" class="btn btn-secondary">{{ _('artworks_empty_reset') }}</a>
+      <a href="{{ url_for('custom_order') }}" class="btn btn-primary" style="margin-left: 10px;">{{ _('nav_cta') }}</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

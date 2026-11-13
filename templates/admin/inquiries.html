@@ -1,0 +1,67 @@
+{% extends "admin/base_admin.html" %}
+
+{% block page_title %}Customer Inquiries & Messages{% endblock %}
+
+{% block admin_content %}
+<div class="admin-card">
+  <div class="admin-card-header">
+    <div>
+      <h3 class="admin-card-title">Messages & General Inquiries ({{ inquiries|length }})</h3>
+      <small style="color: var(--admin-text-muted);">Messages submitted through the public Contact page form</small>
+    </div>
+  </div>
+
+  <div class="admin-table-responsive">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Sender Name</th>
+          <th>Contact Info</th>
+          <th>Subject</th>
+          <th>Message</th>
+          <th>Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if inquiries %}
+          {% for inq in inquiries %}
+            <tr>
+              <td><b>{{ inq.name }}</b></td>
+              <td>
+                <div>{{ inq.email }}</div>
+                {% if inq.phone %}
+                  <small style="color: var(--admin-text-muted);">{{ inq.phone }}</small>
+                {% endif %}
+              </td>
+              <td><b>{{ inq.subject or 'General Inquiry' }}</b></td>
+              <td style="max-width: 360px;">
+                <p style="margin: 0; font-size: 0.88rem; line-height: 1.5;">{{ inq.message }}</p>
+              </td>
+              <td><small style="color: var(--admin-text-muted);">{{ inq.created_at|date_str }}</small></td>
+              <td>
+                <div style="display: flex; gap: 6px;">
+                  <a href="mailto:{{ inq.email }}?subject=Re:%20{{ inq.subject or 'Artwork Inquiry' }}" class="admin-btn admin-btn-secondary" style="font-size: 0.78rem; padding: 4px 8px;">
+                    Email &rarr;
+                  </a>
+                  {% if inq.phone %}
+                    <a href="https://wa.me/{{ inq.phone }}" target="_blank" class="admin-btn admin-btn-whatsapp" style="font-size: 0.78rem; padding: 4px 8px;">
+                      WhatsApp
+                    </a>
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        {% else %}
+          <tr>
+            <td colspan="6" style="text-align: center; color: var(--admin-text-muted); padding: 40px;">
+              No contact inquiries received yet.
+            </td>
+          </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('about_title_page') }} | {{ site_settings.get('about_name', 'Vinit Mhatre') }}{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 50px; padding-bottom: 80px;">
+
+  <!-- Hero Header Banner (Text & Typography ONLY - Strictly NO Photo) -->
+  <div style="background: linear-gradient(135deg, #FAF6F0 0%, #F5EFEB 100%); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 50px 40px; margin-bottom: 50px; text-align: center; box-shadow: var(--shadow-sm); position: relative; overflow: hidden;">
+    <div style="display: inline-block; padding: 6px 18px; background: rgba(217, 83, 47, 0.1); border-radius: var(--radius-full); color: var(--accent-terracotta); font-weight: 700; font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 16px;">
+      🎨 {{ _('about_eyebrow') }} &bull; PVM ART WORKS
+    </div>
+    
+    <h1 style="font-family: var(--font-heading); font-size: 3rem; color: var(--text-dark); margin-bottom: 12px; line-height: 1.15;">
+      {{ site_settings.get('about_name', 'Vinit Mhatre') }}
+    </h1>
+    
+    <div style="font-size: 1.25rem; color: var(--accent-terracotta); font-weight: 600; margin-bottom: 24px; font-family: var(--font-heading);">
+      {{ site_settings.get('about_title', 'Fine Artist & Master Craftsman') }}
+    </div>
+
+    <div style="max-width: 820px; margin: 0 auto; font-size: 1.2rem; font-style: italic; color: var(--text-dark); line-height: 1.8; background: #FFFFFF; padding: 24px 32px; border-radius: var(--radius-md); border-left: 4px solid var(--accent-terracotta); box-shadow: var(--shadow-sm);">
+      &ldquo;{{ site_settings.get('about_intro', 'Every stroke is a heartbeat. Every canvas is an opportunity to keep an emotion alive forever.') }}&rdquo;
+    </div>
+
+    <div style="display: flex; justify-content: center; gap: 16px; margin-top: 32px; flex-wrap: wrap;">
+      <a href="{{ url_for('custom_order') }}" class="btn btn-primary btn-lg">{{ _('nav_cta') }}</a>
+      <a href="{{ url_for('artworks') }}" class="btn btn-secondary btn-lg">{{ _('feat_btn_all') }}</a>
+    </div>
+  </div>
+
+  <!-- Two-Column Information Cards: Biography & Experience -->
+  <div style="display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 36px; margin-bottom: 40px;">
+    
+    <!-- Biography / Story -->
+    <div style="background: var(--bg-card); border-radius: var(--radius-lg); padding: 40px; border: 1px solid var(--border-subtle); box-shadow: var(--shadow-md);">
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+        <span style="font-size: 1.6rem; color: var(--accent-terracotta);">&#9998;</span>
+        <h2 style="font-family: var(--font-heading); font-size: 1.7rem; color: var(--text-dark); margin: 0;">{{ _('about_story_title') }}</h2>
+      </div>
+      <div style="color: var(--text-body); line-height: 1.85; font-size: 1.02rem; white-space: pre-line;">
+        {{ site_settings.get('about_bio', site_settings.get('about_story', 'Vinit Mhatre is an Indian artist known for his realistic graphite sketches, vivid portraits, and intricate rangoli.')) }}
+      </div>
+    </div>
+
+    <!-- Artistic Experience & Journey -->
+    <div style="background: var(--bg-card); border-radius: var(--radius-lg); padding: 40px; border: 1px solid var(--border-subtle); box-shadow: var(--shadow-md);">
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+        <span style="font-size: 1.6rem; color: var(--accent-gold);">&#9733;</span>
+        <h2 style="font-family: var(--font-heading); font-size: 1.7rem; color: var(--text-dark); margin: 0;">{{ _('about_exp_title') }}</h2>
+      </div>
+      <div style="color: var(--text-body); line-height: 1.8; font-size: 1.02rem; white-space: pre-line;">
+        {{ site_settings.get('about_experience', 'Over 7+ years of dedicated practice in fine arts.') }}
+      </div>
+
+      <div style="margin-top: 24px; padding: 20px; background: var(--bg-subtle); border-radius: var(--radius-md); border-left: 3px solid var(--accent-gold);">
+        <h4 style="font-size: 0.95rem; color: var(--text-dark); margin-bottom: 6px;">📍 Panvel Studio & All-India Reach</h4>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin: 0;">
+          All artworks are individually conceptualized and handcrafted at Vinit's studio in Panvel, Navi Mumbai, and safely shipped across India.
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Skills, Techniques & Artwork Description Cards -->
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 36px; margin-bottom: 50px;">
+    
+    <!-- Skills & Mastered Mediums -->
+    <div style="background: var(--bg-card); border-radius: var(--radius-lg); padding: 36px; border: 1px solid var(--border-subtle); box-shadow: var(--shadow-sm);">
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 18px;">
+        <span style="font-size: 1.5rem; color: var(--accent-emerald);">&#10003;</span>
+        <h3 style="font-family: var(--font-heading); font-size: 1.5rem; color: var(--text-dark); margin: 0;">{{ _('about_skills_title') }}</h3>
+      </div>
+      <p style="color: var(--text-body); line-height: 1.8; font-size: 0.98rem; white-space: pre-line;">
+        {{ site_settings.get('about_skills', 'Graphite, Charcoal, Colour Pencils, Rangoli, Watercolour, Fabric Painting') }}
+      </p>
+    </div>
+
+    <!-- Description of Artwork & Style -->
+    <div style="background: var(--bg-card); border-radius: var(--radius-lg); padding: 36px; border: 1px solid var(--border-subtle); box-shadow: var(--shadow-sm);">
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 18px;">
+        <span style="font-size: 1.5rem; color: var(--accent-indigo);">&#127912;</span>
+        <h3 style="font-family: var(--font-heading); font-size: 1.5rem; color: var(--text-dark); margin: 0;">{{ _('about_artwork_title') }}</h3>
+      </div>
+      <p style="color: var(--text-body); line-height: 1.8; font-size: 0.98rem; white-space: pre-line;">
+        {{ site_settings.get('about_artwork_description', 'My artwork is rooted in emotional truth and archival craftsmanship.') }}
+      </p>
+    </div>
+
+  </div>
+
+  <!-- Creative Process Breakdown -->
+  <section style="background: var(--bg-card); border-radius: var(--radius-lg); padding: 50px 40px; border: 1px solid var(--border-subtle); box-shadow: var(--shadow-md); margin-bottom: 50px;">
+    <div style="text-align: center; margin-bottom: 40px;">
+      <span class="eyebrow">{{ _('about_proc_eyebrow') }}</span>
+      <h2 class="section-title">{{ _('about_proc_title') }} <span>{{ _('about_proc_title_span') }}</span></h2>
+      <p class="section-lead" style="margin: 0 auto;">
+        {{ _('about_proc_lead') }}
+      </p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px;">
+      <div style="padding: 24px; background: var(--bg-subtle); border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+        <div style="color: var(--accent-terracotta); font-size: 1.6rem; margin-bottom: 12px; font-weight: 700;">01</div>
+        <h3 style="font-size: 1.15rem; margin-bottom: 8px;">{{ _('about_step1_t') }}</h3>
+        <p style="font-size: 0.9rem; color: var(--text-body);">{{ _('about_step1_d') }}</p>
+      </div>
+
+      <div style="padding: 24px; background: var(--bg-subtle); border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+        <div style="color: var(--accent-terracotta); font-size: 1.6rem; margin-bottom: 12px; font-weight: 700;">02</div>
+        <h3 style="font-size: 1.15rem; margin-bottom: 8px;">{{ _('about_step2_t') }}</h3>
+        <p style="font-size: 0.9rem; color: var(--text-body);">{{ _('about_step2_d') }}</p>
+      </div>
+
+      <div style="padding: 24px; background: var(--bg-subtle); border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+        <div style="color: var(--accent-terracotta); font-size: 1.6rem; margin-bottom: 12px; font-weight: 700;">03</div>
+        <h3 style="font-size: 1.15rem; margin-bottom: 8px;">{{ _('about_step3_t') }}</h3>
+        <p style="font-size: 0.9rem; color: var(--text-body);">{{ _('about_step3_d') }}</p>
+      </div>
+
+      <div style="padding: 24px; background: var(--bg-subtle); border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+        <div style="color: var(--accent-terracotta); font-size: 1.6rem; margin-bottom: 12px; font-weight: 700;">04</div>
+        <h3 style="font-size: 1.15rem; margin-bottom: 8px;">{{ _('about_step4_t') }}</h3>
+        <p style="font-size: 0.9rem; color: var(--text-body);">{{ _('about_step4_d') }}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Archival Materials & Quality Promise -->
+  <div style="background: linear-gradient(135deg, #1D2A4A 0%, #2A3B60 100%); color: #FFFFFF; border-radius: var(--radius-lg); padding: 44px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center;">
+    <div>
+      <span class="eyebrow" style="color: #F5C94D;">{{ _('about_archival_eyebrow') }}</span>
+      <h2 style="font-family: var(--font-heading); font-size: 2rem; color: #FFFFFF; margin-bottom: 14px;">{{ _('about_archival_title') }}</h2>
+      <p style="color: #CBD5E0; line-height: 1.7; font-size: 0.98rem; margin-bottom: 20px;">
+        {{ _('about_archival_desc') }}
+      </p>
+      <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+        <a href="{{ url_for('custom_order') }}" class="btn btn-primary">{{ _('nav_cta') }}</a>
+        <a href="https://wa.me/{{ clean_whatsapp }}" target="_blank" rel="noopener" class="btn btn-whatsapp">&#128172; {{ _('contact_btn_whatsapp') }}</a>
+      </div>
+    </div>
+
+    <div style="background: rgba(255, 255, 255, 0.08); border-radius: var(--radius-md); padding: 28px; border: 1px solid rgba(255, 255, 255, 0.15);">
+      <ul style="list-style: none; display: flex; flex-direction: column; gap: 14px; font-size: 0.95rem;">
+        <li style="display: flex; gap: 12px; align-items: center;">
+          <span style="color: #10B981; font-weight: 700; font-size: 1.1rem;">&#10003;</span>
+          <span><b>Graphite & Charcoal:</b> Staedtler Mars Lumograph & Nitram Charcoal</span>
+        </li>
+        <li style="display: flex; gap: 12px; align-items: center;">
+          <span style="color: #10B981; font-weight: 700; font-size: 1.1rem;">&#10003;</span>
+          <span><b>Coloured Pencils:</b> Prismacolor Premier & Faber-Castell Polychromos</span>
+        </li>
+        <li style="display: flex; gap: 12px; align-items: center;">
+          <span style="color: #10B981; font-weight: 700; font-size: 1.1rem;">&#10003;</span>
+          <span><b>Papers:</b> Arches 100% Cotton 300 GSM & Strathmore Bristol</span>
+        </li>
+        <li style="display: flex; gap: 12px; align-items: center;">
+          <span style="color: #10B981; font-weight: 700; font-size: 1.1rem;">&#10003;</span>
+          <span><b>Preservation:</b> Archival UV-protective anti-smudge coating</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

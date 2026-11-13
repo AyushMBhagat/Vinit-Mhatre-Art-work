@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}{{ artwork.title }} | Vinit Mhatre Art{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 50px; padding-bottom: 80px;">
+  <div style="margin-bottom: 24px;">
+    <a href="{{ url_for('artworks') }}" style="color: var(--text-muted); font-size: 0.9rem; display: inline-flex; align-items: center; gap: 6px;">
+      &larr; {{ _('artworks_back') }}
+    </a>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 50px; align-items: start; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 40px; box-shadow: var(--shadow-md);">
+    <!-- Left: Artwork Image Showcase -->
+    <div style="position: relative; border-radius: var(--radius-md); overflow: hidden; background: #FAF6F0; border: 1px solid var(--border-subtle); box-shadow: var(--shadow-sm);">
+      <img src="{{ url_for('static', filename='images/' + artwork.image_path) if not artwork.image_path.startswith('uploads/') else url_for('static', filename=artwork.image_path) }}" 
+           alt="{{ artwork.title }}" 
+           style="width: 100%; height: auto; max-height: 560px; object-fit: contain; margin: 0 auto; display: block;">
+      <span class="badge badge-terracotta" style="position: absolute; top: 16px; left: 16px; font-size: 0.82rem; padding: 6px 14px;">
+        {{ artwork.category }}
+      </span>
+    </div>
+
+    <!-- Right: Specifications & Commission CTA -->
+    <div>
+      <span class="eyebrow">{{ artwork.category }}</span>
+      <h1 style="font-size: 2.2rem; margin-bottom: 16px;">{{ artwork.title }}</h1>
+
+      <div style="background: var(--bg-subtle); border-radius: var(--radius-md); padding: 20px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between;">
+        <div>
+          <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">{{ _('art_detail_price_label') }}</span>
+          {% if artwork.show_price and artwork.price > 0 %}
+            <div style="font-size: 1.8rem; font-family: var(--font-heading); color: var(--accent-terracotta); font-weight: 700;">
+              ₹{{ "{:,.0f}".format(artwork.price) }}
+            </div>
+          {% else %}
+            <div style="font-size: 1.3rem; font-family: var(--font-heading); color: var(--accent-terracotta); font-weight: 700; padding-top: 4px;">
+              {{ _('price_on_request') }}
+            </div>
+          {% endif %}
+        </div>
+        <div>
+          {% if artwork.is_available %}
+            <span class="badge badge-emerald">&#10003; {{ _('art_detail_open') }}</span>
+          {% else %}
+            <span class="badge badge-gold">{{ _('art_detail_limited') }}</span>
+          {% endif %}
+        </div>
+      </div>
+
+      <div style="margin-bottom: 24px;">
+        <h4 style="font-size: 1.05rem; margin-bottom: 8px;">{{ _('art_detail_about') }}</h4>
+        <p style="color: var(--text-body); line-height: 1.7;">{{ artwork.description }}</p>
+      </div>
+
+      <div style="border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle); padding: 18px 0; margin-bottom: 28px;">
+        <table style="width: 100%; font-size: 0.92rem;">
+          <tr style="height: 32px;">
+            <td style="color: var(--text-muted); width: 35%;"><b>{{ _('art_detail_medium') }}:</b></td>
+            <td style="color: var(--text-dark);">{{ artwork.medium or 'Graphite & Mixed Pigments' }}</td>
+          </tr>
+          <tr style="height: 32px;">
+            <td style="color: var(--text-muted);"><b>{{ _('art_detail_dimensions') }}:</b></td>
+            <td style="color: var(--text-dark);">{{ artwork.dimensions or 'Custom Sizes Available' }}</td>
+          </tr>
+          <tr style="height: 32px;">
+            <td style="color: var(--text-muted);"><b>{{ _('art_detail_auth') }}:</b></td>
+            <td style="color: var(--text-dark);">{{ _('art_detail_auth_val') }}</td>
+          </tr>
+          <tr style="height: 32px;">
+            <td style="color: var(--text-muted);"><b>{{ _('art_detail_pack') }}:</b></td>
+            <td style="color: var(--text-dark);">{{ _('art_detail_pack_val') }}</td>
+          </tr>
+        </table>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <a href="{{ url_for('custom_order', category=artwork.category, artwork_id=artwork.id) }}" class="btn btn-primary btn-lg" style="width: 100%;">
+          {{ _('art_detail_btn_order') }}
+        </a>
+        <a href="https://wa.me/{{ clean_whatsapp }}?text=Hello%20Vinit!%20I%20am%20interested%20in%20an%20artwork%20similar%20to%20'{{ artwork.title }}'%20(ID:%20{{ artwork.id }})." 
+           target="_blank" 
+           rel="noopener" 
+           class="btn btn-whatsapp" 
+           style="width: 100%;">
+          &#128172; {{ _('art_detail_btn_wa') }}
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,152 @@
+{% extends "admin/base_admin.html" %}
+
+{% block page_title %}Home Page Images{% endblock %}
+
+{% block admin_content %}
+<!-- Upload New Image -->
+<div class="admin-card" style="margin-bottom: 28px;">
+  <div class="admin-card-header">
+    <h3 class="admin-card-title">&#128444; Upload New Home Page Image</h3>
+    <small style="color: var(--admin-text-muted);">Images appear in the hero section carousel on the public home page.</small>
+  </div>
+  <div style="padding: 28px;">
+    <form method="POST" action="{{ url_for('admin_homepage_images') }}" enctype="multipart/form-data">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <div class="admin-form-group">
+          <label>Image Title <span class="required">*</span></label>
+          <input type="text" name="title" class="admin-input" placeholder="e.g. Vibrant Couple Portrait" required>
+        </div>
+        <div class="admin-form-group">
+          <label>Badge Text (Optional)</label>
+          <input type="text" name="badge_text" class="admin-input" placeholder="e.g. PVM Art Works Certified">
+        </div>
+        <div class="admin-form-group">
+          <label>Image File <span class="required">*</span></label>
+          <input type="file" name="image" class="admin-input" accept="image/png, image/jpeg, image/webp" required>
+        </div>
+        <div class="admin-form-group">
+          <label>Link URL (Optional)</label>
+          <input type="text" name="link_url" class="admin-input" placeholder="e.g. /artworks?category=Pencil+Portraits">
+        </div>
+        <div class="admin-form-group">
+          <label>Description</label>
+          <input type="text" name="description" class="admin-input" placeholder="Short description for this image">
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+          <div class="admin-form-group">
+            <label>Display Order</label>
+            <input type="number" name="sort_order" class="admin-input" placeholder="0" value="0" min="0">
+          </div>
+          <div class="admin-form-group">
+            <label>Status</label>
+            <label style="display: flex; align-items: center; gap: 8px; margin-top: 10px; cursor: pointer; font-weight: 600;">
+              <input type="checkbox" name="is_active" value="1" checked style="width: 16px; height: 16px;">
+              Active (Show on website)
+            </label>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top: 10px;">
+        <button type="submit" class="admin-btn admin-btn-primary">&#128444; Upload & Add to Home Page</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- All Home Page Images -->
+<div class="admin-card">
+  <div class="admin-card-header">
+    <h3 class="admin-card-title">All Home Page Images ({{ images|length }})</h3>
+    <small style="color: var(--admin-text-muted);">Sort order controls the display sequence. Lower number = shown first.</small>
+  </div>
+  <div style="padding: 24px; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px;">
+    {% for img in images %}
+    <div style="background: var(--admin-card-bg); border: 1px solid var(--admin-border); border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+      <!-- Image Preview -->
+      <div style="position: relative; height: 200px; background: #F1F5F9; overflow: hidden;">
+        <img src="{{ url_for('static', filename='images/' + img.image_path) if not img.image_path.startswith('uploads/') else url_for('static', filename=img.image_path) }}" 
+             alt="{{ img.title }}" 
+             style="width: 100%; height: 100%; object-fit: cover;">
+        {% if img.badge_text %}
+          <span style="position: absolute; top: 10px; left: 10px; background: rgba(217,83,47,0.9); color: #fff; font-size: 0.72rem; padding: 4px 10px; border-radius: 20px; font-weight: 600;">
+            {{ img.badge_text }}
+          </span>
+        {% endif %}
+        <span style="position: absolute; top: 10px; right: 10px; padding: 3px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; background: {% if img.is_active %}rgba(16,185,129,0.9){% else %}rgba(239,68,68,0.9){% endif %}; color: white;">
+          {% if img.is_active %}ACTIVE{% else %}HIDDEN{% endif %}
+        </span>
+        <span style="position: absolute; bottom: 10px; left: 10px; background: rgba(0,0,0,0.6); color: #fff; font-size: 0.7rem; padding: 2px 8px; border-radius: 10px;">
+          Order: {{ img.sort_order }}
+        </span>
+      </div>
+
+      <!-- Image Info -->
+      <div style="padding: 16px;">
+        <h4 style="font-size: 0.95rem; color: var(--admin-text-main); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ img.title }}</h4>
+        {% if img.description %}
+          <p style="font-size: 0.8rem; color: var(--admin-text-muted); margin-bottom: 10px; line-height: 1.4;">{{ img.description[:80] }}...</p>
+        {% endif %}
+
+        <!-- Edit Form Toggle -->
+        <button type="button" class="admin-btn admin-btn-secondary" style="font-size: 0.78rem; padding: 5px 10px; width: 100%; margin-bottom: 8px;"
+                onclick="document.getElementById('editImg{{ img.id }}').style.display = document.getElementById('editImg{{ img.id }}').style.display === 'none' ? 'block' : 'none'">
+          &#9998; Edit Details
+        </button>
+        <form method="POST" action="{{ url_for('admin_homepage_image_delete', image_id=img.id) }}" 
+              onsubmit="return confirm('Remove this image from the home page?');">
+          <button type="submit" class="admin-btn" style="font-size: 0.78rem; padding: 5px 10px; width: 100%; background: rgba(239,68,68,0.08); color: #EF4444; border: 1px solid rgba(239,68,68,0.2);">
+            &#128465; Remove Image
+          </button>
+        </form>
+
+        <!-- Edit Inline Form -->
+        <div id="editImg{{ img.id }}" style="display: none; margin-top: 14px; padding: 14px; background: #F8FAFC; border-radius: 8px; border: 1px solid var(--admin-border);">
+          <form method="POST" action="{{ url_for('admin_homepage_image_edit', image_id=img.id) }}" enctype="multipart/form-data">
+            <div class="admin-form-group">
+              <label style="font-size: 0.8rem;">Title</label>
+              <input type="text" name="title" class="admin-input" value="{{ img.title }}" required style="font-size: 0.85rem;">
+            </div>
+            <div class="admin-form-group">
+              <label style="font-size: 0.8rem;">Badge Text</label>
+              <input type="text" name="badge_text" class="admin-input" value="{{ img.badge_text or '' }}" style="font-size: 0.85rem;">
+            </div>
+            <div class="admin-form-group">
+              <label style="font-size: 0.8rem;">Description</label>
+              <input type="text" name="description" class="admin-input" value="{{ img.description or '' }}" style="font-size: 0.85rem;">
+            </div>
+            <div class="admin-form-group">
+              <label style="font-size: 0.8rem;">Replace Image (optional)</label>
+              <input type="file" name="image" class="admin-input" accept="image/png, image/jpeg, image/webp" style="font-size: 0.82rem;">
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+              <div class="admin-form-group">
+                <label style="font-size: 0.8rem;">Sort Order</label>
+                <input type="number" name="sort_order" class="admin-input" value="{{ img.sort_order }}" min="0">
+              </div>
+              <div class="admin-form-group">
+                <label style="font-size: 0.8rem; display: flex; align-items: center; gap: 8px; margin-top: 22px; cursor: pointer;">
+                  <input type="checkbox" name="is_active" value="1" {% if img.is_active %}checked{% endif %} style="width: 16px; height: 16px;">
+                  Active
+                </label>
+              </div>
+            </div>
+            <input type="hidden" name="link_url" value="{{ img.link_url or '' }}">
+            <div style="display: flex; gap: 8px; margin-top: 6px;">
+              <button type="submit" class="admin-btn admin-btn-primary" style="font-size: 0.82rem; flex: 1;">Save Changes</button>
+              <button type="button" class="admin-btn admin-btn-secondary" style="font-size: 0.82rem;"
+                      onclick="document.getElementById('editImg{{ img.id }}').style.display='none'">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    {% else %}
+    <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: var(--admin-text-muted);">
+      <div style="font-size: 3rem; margin-bottom: 16px;">&#128444;</div>
+      <h3>No homepage images yet.</h3>
+      <p>Upload your first image above to display it in the hero section.</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

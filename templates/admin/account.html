@@ -1,0 +1,84 @@
+{% extends "admin/base_admin.html" %}
+
+{% block page_title %}My Admin Account{% endblock %}
+
+{% block admin_content %}
+<div class="admin-card" style="max-width: 600px; margin: 0 auto;">
+  <div class="admin-card-header">
+    <h3 class="admin-card-title">&#128272; Change Admin Credentials</h3>
+    <small style="color: var(--admin-text-muted);">Current user: <b>{{ session.get('admin_username', 'admin') }}</b></small>
+  </div>
+
+  <div style="padding: 32px;">
+    <div style="padding: 14px 18px; background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.2); border-radius: 8px; margin-bottom: 28px; font-size: 0.88rem; color: #991B1B; display: flex; align-items: center; gap: 10px;">
+      <span style="font-size: 1.2rem;">&#128272;</span>
+      <div>
+        <b>Security Notice:</b> Always use a strong password. After changing credentials, you will need to use the new username/password on next login.
+      </div>
+    </div>
+
+    <form method="POST" action="{{ url_for('admin_account') }}">
+      <!-- Current Password Verification -->
+      <div class="admin-form-group">
+        <label>Current Password <span class="required">*</span></label>
+        <input type="password" name="current_password" class="admin-input" placeholder="Enter your current password" required autocomplete="current-password">
+        <small style="color: var(--admin-text-muted); font-size: 0.78rem;">Required to authorize any credential changes.</small>
+      </div>
+
+      <div style="height: 1px; background: var(--admin-border); margin: 24px 0;"></div>
+
+      <!-- New Username -->
+      <div class="admin-form-group">
+        <label>Username</label>
+        <input type="text" name="username" class="admin-input" value="{{ admin.username if admin else 'admin' }}" placeholder="admin" autocomplete="username" required>
+        <small style="color: var(--admin-text-muted); font-size: 0.78rem;">This is what you type in the login form at <code>/admin/login</code></small>
+      </div>
+
+      <!-- Display Name -->
+      <div class="admin-form-group">
+        <label>Display Name</label>
+        <input type="text" name="name" class="admin-input" value="{{ admin.name if admin else 'Vinit Mhatre' }}" placeholder="Vinit Mhatre">
+        <small style="color: var(--admin-text-muted); font-size: 0.78rem;">Name shown in the sidebar "Welcome back" message.</small>
+      </div>
+
+      <div style="height: 1px; background: var(--admin-border); margin: 24px 0;"></div>
+
+      <!-- New Password Section -->
+      <div style="padding: 18px; background: #F8FAFC; border-radius: 8px; border: 1px solid var(--admin-border);">
+        <h4 style="font-size: 0.95rem; color: var(--admin-text-main); margin-bottom: 16px;">Change Password (Optional — Leave blank to keep current)</h4>
+
+        <div class="admin-form-group">
+          <label>New Password</label>
+          <input type="password" name="new_password" class="admin-input" placeholder="Min. 6 characters" autocomplete="new-password">
+        </div>
+
+        <div class="admin-form-group">
+          <label>Confirm New Password</label>
+          <input type="password" name="confirm_password" class="admin-input" placeholder="Repeat new password" autocomplete="new-password">
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 14px; justify-content: flex-end; padding-top: 24px; border-top: 1px solid var(--admin-border); margin-top: 24px;">
+        <a href="{{ url_for('admin_dashboard') }}" class="admin-btn admin-btn-secondary">Cancel</a>
+        <button type="submit" class="admin-btn admin-btn-primary" style="padding: 12px 28px;">
+          &#128272; Update Credentials &rarr;
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Password Security Tips -->
+<div class="admin-card" style="max-width: 600px; margin: 24px auto 0;">
+  <div style="padding: 20px 24px;">
+    <h4 style="font-size: 0.9rem; color: var(--admin-text-main); margin-bottom: 10px;">&#9889; Password Security Tips</h4>
+    <ul style="color: var(--admin-text-muted); font-size: 0.82rem; line-height: 1.8; padding-left: 18px;">
+      <li>Use at least 10 characters mixing uppercase, lowercase, numbers, and symbols</li>
+      <li>Never share your admin credentials with anyone</li>
+      <li>Change your password if you suspect it has been compromised</li>
+      <li>The default password is <code>Admin@VinitArt2026</code> — change it immediately if you haven't</li>
+      <li>Passwords are securely hashed — Vinit cannot see your plain-text password</li>
+    </ul>
+  </div>
+</div>
+{% endblock %}

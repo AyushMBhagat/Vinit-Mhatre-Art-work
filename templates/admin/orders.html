@@ -1,0 +1,110 @@
+{% extends "admin/base_admin.html" %}
+
+{% block page_title %}Manage Customer Orders{% endblock %}
+
+{% block admin_content %}
+<!-- Status Filter Tabs -->
+<div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px;">
+  {% set all_tabs = [
+    ('all', 'All Orders'),
+    ('Order Received', 'New Orders'),
+    ('Order Confirmed', 'Confirmed'),
+    ('Work In Progress', 'In Progress'),
+    ('Artwork Ready', 'Ready'),
+    ('Shipped / Ready for Pickup', 'Shipped / Pickup'),
+    ('Completed', 'Completed')
+  ] %}
+
+  {% for key, label in all_tabs %}
+    <a href="{{ url_for('admin_orders', status=key, search=search_query) }}" 
+       class="admin-btn {% if current_status == key %}admin-btn-primary{% else %}admin-btn-secondary{% endif %}"
+       style="font-size: 0.82rem; padding: 7px 14px;">
+      {{ label }}
+    </a>
+  {% endfor %}
+</div>
+
+<!-- Search & Table Card -->
+<div class="admin-card">
+  <div class="admin-card-header" style="flex-wrap: wrap; gap: 16px;">
+    <div>
+      <h3 class="admin-card-title">Customer Commissions ({{ orders|length }})</h3>
+      <small style="color: var(--admin-text-muted);">Manage order statuses, milestone updates, payments, and photos</small>
+    </div>
+
+    <!-- Search Form -->
+    <form action="{{ url_for('admin_orders') }}" method="GET" style="display: flex; gap: 8px;">
+      <input type="hidden" name="status" value="{{ current_status }}">
+      <input type="text" name="search" class="admin-input" placeholder="Search by Order ID, Name, Phone..." value="{{ search_query }}" style="width: 260px; padding: 6px 12px; font-size: 0.85rem;">
+      <button type="submit" class="admin-btn admin-btn-primary" style="padding: 6px 14px; font-size: 0.85rem;">Search</button>
+      {% if search_query %}
+        <a href="{{ url_for('admin_orders', status=current_status) }}" class="admin-btn admin-btn-secondary" style="padding: 6px 12px; font-size: 0.85rem;">Clear</a>
+      {% endif %}
+    </form>
+  </div>
+
+  <div class="admin-table-responsive">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Order Code</th>
+          <th>Customer</th>
+          <th>Category & Specs</th>
+          <th>Price Details</th>
+          <th>Payment</th>
+          <th>Order Status</th>
+          <th>Submission Date</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if orders %}
+          {% for o in orders %}
+            <tr>
+              <td>
+                <b style="color: var(--admin-primary); font-family: monospace; font-size: 0.95rem;">{{ o.order_code }}</b>
+              </td>
+              <td>
+                <div><b>{{ o.customer_name }}</b></div>
+                <small style="color: var(--admin-text-muted);">{{ o.customer_phone }}</small>
+              </td>
+              <td>
+                <div>{{ o.category }}</div>
+                <small style="color: var(--admin-text-muted);">{{ o.size_canvas }} &bull; {{ o.num_faces }} Face(s)</small>
+              </td>
+              <td>
+                <div><b>₹{{ "{:,.0f}".format(o.final_price or o.estimated_price or 0) }}</b></div>
+                <small style="color: var(--admin-text-muted);">Est: ₹{{ "{:,.0f}".format(o.estimated_price or 0) }}</small>
+              </td>
+              <td>
+                <span class="status-pill payment-{{ o.payment_status.lower().replace(' ', '-') }}">
+                  {{ o.payment_status }}
+                </span>
+              </td>
+              <td>
+                <span class="status-pill status-{{ o.status.lower().replace(' ', '-').replace('/', '-') }}">
+                  {{ o.status }}
+                </span>
+              </td>
+              <td>
+                <small style="color: var(--admin-text-muted);">{{ o.created_at|date_str }}</small>
+              </td>
+              <td>
+                <a href="{{ url_for('admin_order_detail', order_id=o.id) }}" class="admin-btn admin-btn-secondary" style="font-size: 0.8rem; padding: 5px 12px;">
+                  Manage &rarr;
+                </a>
+              </td>
+            </tr>
+          {% endfor %}
+        {% else %}
+          <tr>
+            <td colspan="8" style="text-align: center; color: var(--admin-text-muted); padding: 40px;">
+              No orders found matching this status or search criteria.
+            </td>
+          </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

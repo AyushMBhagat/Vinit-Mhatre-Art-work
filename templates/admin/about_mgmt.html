@@ -1,0 +1,90 @@
+{% extends "admin/base_admin.html" %}
+
+{% block page_title %}About Section Management{% endblock %}
+
+{% block admin_content %}
+<div class="admin-card" style="max-width: 900px; margin: 0 auto;">
+  <div class="admin-card-header">
+    <h3 class="admin-card-title">&#128100; Edit About Section — No Photo Policy</h3>
+    <span style="background: rgba(16,185,129,0.1); color: #10B981; font-size: 0.75rem; padding: 4px 10px; border-radius: 20px; font-weight: 700; border: 1px solid rgba(16,185,129,0.2);">
+      &#10003; Photo-Free Design Active
+    </span>
+  </div>
+
+  <div style="padding: 32px;">
+    <div style="padding: 14px 18px; background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.2); border-radius: 8px; margin-bottom: 28px; font-size: 0.88rem; color: #065F46; display: flex; align-items: center; gap: 10px;">
+      <span style="font-size: 1.2rem;">&#127919;</span>
+      <div>
+        <b>About Section Design:</b> The public About page displays a fully typography-based, professional artist profile — no photos are shown anywhere. Only the text fields you fill in here will appear.
+      </div>
+    </div>
+
+    <form method="POST" action="{{ url_for('admin_about') }}">
+      
+      <!-- Artist Name & Title -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <div class="admin-form-group">
+          <label>Artist Display Name</label>
+          <input type="text" name="about_name" class="admin-input" value="{{ settings.get('about_name', 'Vinit Mhatre') }}" placeholder="Vinit Mhatre">
+          <small style="color: var(--admin-text-muted); font-size: 0.78rem;">Large heading shown at the top of the About page.</small>
+        </div>
+        <div class="admin-form-group">
+          <label>Artist Title / Role</label>
+          <input type="text" name="about_title" class="admin-input" value="{{ settings.get('about_title', 'Fine Artist & Master Craftsman') }}" placeholder="Fine Artist & Master Craftsman">
+          <small style="color: var(--admin-text-muted); font-size: 0.78rem;">Shown below the name in terracotta color.</small>
+        </div>
+      </div>
+
+      <!-- Intro Quote -->
+      <div class="admin-form-group">
+        <label>Personal Intro Quote (shown in a highlighted box)</label>
+        <textarea name="about_intro" class="admin-textarea" rows="2" placeholder="Every stroke is a heartbeat...">{{ settings.get('about_intro', 'Every stroke is a heartbeat. Every canvas is an opportunity to keep an emotion alive forever.') }}</textarea>
+        <small style="color: var(--admin-text-muted); font-size: 0.78rem;">This appears as an italic quote in a prominent box on the About page.</small>
+      </div>
+
+      <!-- Full Biography -->
+      <div class="admin-form-group">
+        <label>Full Biography / Story</label>
+        <textarea name="about_bio" class="admin-textarea" rows="6" placeholder="Describe Vinit's artistic journey, background, what drives the passion for art...">{{ settings.get('about_bio', settings.get('about_story', '')) }}</textarea>
+        <small style="color: var(--admin-text-muted); font-size: 0.78rem;">Main biography paragraph. Supports multiple lines (use Enter for new paragraphs).</small>
+      </div>
+
+      <!-- Artistic Experience -->
+      <div class="admin-form-group">
+        <label>Artistic Experience & Journey Milestones</label>
+        <textarea name="about_experience" class="admin-textarea" rows="5" placeholder="Years of experience, notable achievements, training, exhibitions...">{{ settings.get('about_experience', '') }}</textarea>
+        <small style="color: var(--admin-text-muted); font-size: 0.78rem;">Shown in a separate card alongside the biography. Use line breaks for readability.</small>
+      </div>
+
+      <!-- Skills & Mediums -->
+      <div class="admin-form-group">
+        <label>Skills & Mastered Art Mediums</label>
+        <textarea name="about_skills" class="admin-textarea" rows="4" placeholder="List your skills and techniques, one per line or comma-separated...">{{ settings.get('about_skills', 'Graphite & Charcoal Portraits\nColour Pencil Drawings (Prismacolor & Polychromos)\nRangoli (Sanskar Bharti, Geometric, Portrait)\nWatercolour Paintings\nFabric Painting (Sarees, Dupattas)\nDecorative & Wall Art') }}</textarea>
+        <small style="color: var(--admin-text-muted); font-size: 0.78rem;">Shown in the Skills card on the About page.</small>
+      </div>
+
+      <!-- Description of Artwork Style -->
+      <div class="admin-form-group">
+        <label>Description of Artwork & Style Philosophy</label>
+        <textarea name="about_artwork_description" class="admin-textarea" rows="4" placeholder="Describe your artistic style, what makes your artwork unique, your creative philosophy...">{{ settings.get('about_artwork_description', '') }}</textarea>
+        <small style="color: var(--admin-text-muted); font-size: 0.78rem;">Shown in the "Artwork Style" card section.</small>
+      </div>
+
+      <!-- Creative Process -->
+      <div class="admin-form-group">
+        <label>Creative Process Description (optional — overrides default process steps text)</label>
+        <textarea name="creative_process" class="admin-textarea" rows="3" placeholder="Brief description of your creative process for the section header...">{{ settings.get('creative_process', '') }}</textarea>
+      </div>
+
+      <div style="display: flex; gap: 14px; justify-content: flex-end; padding-top: 20px; border-top: 1px solid var(--admin-border);">
+        <a href="{{ url_for('about') }}" target="_blank" class="admin-btn admin-btn-secondary">
+          &#128065; Preview Public About Page
+        </a>
+        <button type="submit" class="admin-btn admin-btn-primary" style="padding: 12px 28px;">
+          &#10003; Save About Section Changes &rarr;
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

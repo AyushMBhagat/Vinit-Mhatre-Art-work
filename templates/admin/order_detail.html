@@ -1,0 +1,278 @@
+{% extends "admin/base_admin.html" %}
+
+{% block page_title %}Order Details #{{ order.order_code }}{% endblock %}
+
+{% block admin_content %}
+<div style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
+  <div>
+    <a href="{{ url_for('admin_orders') }}" class="admin-btn admin-btn-secondary" style="font-size: 0.82rem; padding: 6px 14px;">
+      &larr; Back to All Orders
+    </a>
+  </div>
+
+  <div style="display: flex; gap: 10px;">
+    <!-- Direct WhatsApp to Customer -->
+    {% set customer_clean_phone = "".join(order.customer_phone|list)|replace(" ", "")|replace("-", "") %}
+    {% if not customer_clean_phone.startswith("91") and customer_clean_phone|length == 10 %}
+      {% set customer_clean_phone = "91" + customer_clean_phone %}
+    {% endif %}
+
+    <a href="https://wa.me/{{ customer_clean_phone }}?text=Hello%20{{ order.customer_name }}!%20This%20is%20Vinit%20Mhatre%20regarding%20your%20art%20order%20%23{{ order.order_code }}%20({{ order.category }}).%20Current%20status:%20{{ order.status }}." 
+       target="_blank" 
+       rel="noopener" 
+       class="admin-btn admin-btn-whatsapp">
+      &#128172; WhatsApp Customer
+    </a>
+
+    <a href="{{ url_for('track_order', order_code=order.order_code, phone=order.customer_phone) }}" target="_blank" class="admin-btn admin-btn-secondary">
+      View Customer Tracking &rarr;
+    </a>
+  </div>
+</div>
+
+<div class="order-detail-grid">
+  <!-- Left Column: Order Specifications & Customer Info -->
+  <div>
+    <!-- Primary Order Info Card -->
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <h3 class="admin-card-title">Order Specifications</h3>
+        <span class="status-pill status-{{ order.status.lower().replace(' ', '-').replace('/', '-') }}">
+          {{ order.status }}
+        </span>
+      </div>
+
+      <div style="padding: 24px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 24px; font-size: 0.92rem;">
+          <div>
+            <span style="color: var(--admin-text-muted); font-size: 0.78rem; text-transform: uppercase;">Order Code</span>
+            <div style="font-weight: 700; font-family: monospace; font-size: 1.1rem; color: var(--admin-primary);">
+              {{ order.order_code }}
+            </div>
+          </div>
+
+          <div>
+            <span style="color: var(--admin-text-muted); font-size: 0.78rem; text-transform: uppercase;">Category</span>
+            <div style="font-weight: 600;">{{ order.category }}</div>
+          </div>
+
+          <div>
+            <span style="color: var(--admin-text-muted); font-size: 0.78rem; text-transform: uppercase;">Size / Surface</span>
+            <div>{{ order.size_canvas }}</div>
+          </div>
+
+          <div>
+            <span style="color: var(--admin-text-muted); font-size: 0.78rem; text-transform: uppercase;">Framing</span>
+            <div>{{ order.framing }}</div>
+          </div>
+
+          <div>
+            <span style="color: var(--admin-text-muted); font-size: 0.78rem; text-transform: uppercase;">Subjects / Faces</span>
+            <div>{{ order.num_faces }} Face(s)</div>
+          </div>
+
+          <div>
+            <span style="color: var(--admin-text-muted); font-size: 0.78rem; text-transform: uppercase;">Pricing</span>
+            <div>
+              <b>Final: ₹{{ "{:,.0f}".format(order.final_price or order.estimated_price or 0) }}</b>
+              <small style="color: var(--admin-text-muted);">(Estimate: ₹{{ "{:,.0f}".format(order.estimated_price or 0) }})</small>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 20px; border-top: 1px solid var(--admin-border); padding-top: 16px;">
+          <h4 style="font-size: 0.95rem; margin-bottom: 6px;">Artwork Concept Description:</h4>
+          <p style="background: #F8FAFC; padding: 14px; border-radius: 8px; border: 1px solid var(--admin-border); font-size: 0.9rem; line-height: 1.6;">
+            {{ order.description }}
+          </p>
+        </div>
+
+        {% if order.instructions %}
+          <div style="margin-bottom: 20px;">
+            <h4 style="font-size: 0.95rem; margin-bottom: 6px;">Special Instructions:</h4>
+            <p style="background: #F8FAFC; padding: 14px; border-radius: 8px; border: 1px solid var(--admin-border); font-size: 0.9rem; line-height: 1.6; color: var(--admin-primary);">
+              {{ order.instructions }}
+            </p>
+          </div>
+        {% endif %}
+
+        <!-- Reference Photo Viewer -->
+        <div style="border-top: 1px solid var(--admin-border); padding-top: 16px;">
+          <h4 style="font-size: 0.95rem; margin-bottom: 12px;">Customer Reference Photo:</h4>
+          {% if order.reference_photo %}
+            <div class="reference-image-box">
+              <a href="{{ url_for('static', filename='uploads/references/' + order.reference_photo) if not order.reference_photo.startswith('demo/') else url_for('static', filename='images/' + order.reference_photo) }}" target="_blank">
+                <img src="{{ url_for('static', filename='uploads/references/' + order.reference_photo) if not order.reference_photo.startswith('demo/') else url_for('static', filename='images/' + order.reference_photo) }}" alt="Customer reference photo">
+              </a>
+              <div style="margin-top: 8px;">
+                <a href="{{ url_for('static', filename='uploads/references/' + order.reference_photo) if not order.reference_photo.startswith('demo/') else url_for('static', filename='images/' + order.reference_photo) }}" target="_blank" class="admin-btn admin-btn-secondary" style="font-size: 0.78rem; padding: 4px 10px;">
+                  &#128065; Click to View Full Resolution Photo
+                </a>
+              </div>
+            </div>
+          {% else %}
+            <p style="color: var(--admin-text-muted); font-size: 0.9rem; font-style: italic;">
+              No reference photo uploaded by customer during web submission. Request via WhatsApp.
+            </p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Customer Details Card -->
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <h3 class="admin-card-title">Customer Information</h3>
+        <a href="{{ url_for('admin_customer_detail', customer_id=order.customer_id) }}" class="admin-btn admin-btn-secondary" style="font-size: 0.78rem; padding: 4px 10px;">
+          View Profile &rarr;
+        </a>
+      </div>
+      <div style="padding: 24px; font-size: 0.92rem;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+          <div>
+            <span style="color: var(--admin-text-muted); font-size: 0.78rem;">Full Name:</span>
+            <div style="font-weight: 600;">{{ order.customer_name }}</div>
+          </div>
+          <div>
+            <span style="color: var(--admin-text-muted); font-size: 0.78rem;">Phone / WhatsApp:</span>
+            <div><b>{{ order.customer_phone }}</b></div>
+          </div>
+          <div>
+            <span style="color: var(--admin-text-muted); font-size: 0.78rem;">Email Address:</span>
+            <div>{{ order.customer_email or 'Not provided' }}</div>
+          </div>
+          <div>
+            <span style="color: var(--admin-text-muted); font-size: 0.78rem;">Delivery Address:</span>
+            <div>{{ order.customer_address or 'Studio Pickup / Address pending' }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Progress Timeline Milestones Card -->
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <h3 class="admin-card-title">Order Timeline Milestones</h3>
+      </div>
+      <div style="padding: 24px;">
+        <!-- Add New Milestone Form -->
+        <form action="{{ url_for('admin_order_detail', order_id=order.id) }}" method="POST" enctype="multipart/form-data" style="background: #F8FAFC; padding: 18px; border-radius: 8px; border: 1px solid var(--admin-border); margin-bottom: 24px;">
+          <input type="hidden" name="action" value="add_progress">
+          <h4 style="font-size: 0.95rem; margin-bottom: 12px; color: var(--admin-primary);">+ Add Timeline Progress Milestone & Photo</h4>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+            <div>
+              <label style="font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 4px;">Milestone Stage <span class="required">*</span></label>
+              <select name="stage" class="admin-select" required>
+                <option value="Order Received">1. Order Received</option>
+                <option value="Order Confirmed">2. Order Confirmed</option>
+                <option value="Work In Progress" selected>3. Work In Progress</option>
+                <option value="Artwork Ready">4. Artwork Ready</option>
+                <option value="Shipped / Ready for Pickup">5. Shipped / Ready for Pickup</option>
+                <option value="Completed">6. Completed</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 4px;">Public Note (Shown on Customer Tracking)</label>
+              <input type="text" name="notes" class="admin-input" placeholder="E.g. Base outline drawn, shading started, frame assembled...">
+            </div>
+          </div>
+
+          <div class="admin-form-group" style="margin-bottom: 14px;">
+            <label style="font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 4px;">Attach Work-in-Progress (WIP) Photo (Optional)</label>
+            <input type="file" name="progress_image" class="admin-input" accept="image/png, image/jpeg, image/webp">
+            <small style="color: var(--admin-text-muted); font-size: 0.75rem;">Upload a photo of your drawing on desk or framing. The customer will see this on their live tracking screen!</small>
+          </div>
+
+          <button type="submit" class="admin-btn admin-btn-primary" style="font-size: 0.82rem; padding: 7px 16px;">
+            Record Milestone & Update Status &rarr;
+          </button>
+        </form>
+
+        <!-- Existing Milestones Feed -->
+        <div class="milestones-feed" style="margin-left: 10px;">
+          {% for p in progress %}
+            <div class="milestone-item">
+              <div class="milestone-date">{{ p.created_at|date_str }} &bull; By {{ p.updated_by }}</div>
+              <div class="milestone-title">{{ p.stage }}</div>
+              {% if p.notes %}
+                <div class="milestone-notes">{{ p.notes }}</div>
+              {% endif %}
+              {% if p.image_path %}
+                <div style="margin-top: 10px; width: 140px; height: 140px; border-radius: 6px; overflow: hidden; border: 1px solid var(--admin-border);">
+                  <a href="{{ url_for('static', filename=p.image_path) }}" target="_blank">
+                    <img src="{{ url_for('static', filename=p.image_path) }}" alt="Progress Photo" style="width: 100%; height: 100%; object-fit: cover;">
+                  </a>
+                </div>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Column: Status & Administrative Actions -->
+  <div>
+    <div class="admin-card" style="position: sticky; top: 90px;">
+      <div class="admin-card-header">
+        <h3 class="admin-card-title">Update Order Status</h3>
+      </div>
+
+      <div style="padding: 24px;">
+        <form action="{{ url_for('admin_order_detail', order_id=order.id) }}" method="POST">
+          <input type="hidden" name="action" value="update_details">
+
+          <!-- Order Status Dropdown -->
+          <div class="admin-form-group">
+            <label for="status">Order Progress Stage <span class="required">*</span></label>
+            <select id="status" name="status" class="admin-select" required>
+              <option value="Order Received" {% if order.status == 'Order Received' %}selected{% endif %}>1. Order Received</option>
+              <option value="Order Confirmed" {% if order.status == 'Order Confirmed' %}selected{% endif %}>2. Order Confirmed</option>
+              <option value="Work In Progress" {% if order.status == 'Work In Progress' %}selected{% endif %}>3. Work In Progress</option>
+              <option value="Artwork Ready" {% if order.status == 'Artwork Ready' %}selected{% endif %}>4. Artwork Ready</option>
+              <option value="Shipped / Ready for Pickup" {% if order.status == 'Shipped / Ready for Pickup' %}selected{% endif %}>5. Shipped / Ready for Pickup</option>
+              <option value="Completed" {% if order.status == 'Completed' %}selected{% endif %}>6. Completed</option>
+              <option value="Cancelled" {% if order.status == 'Cancelled' %}selected{% endif %}>&times; Cancelled / Rejected</option>
+            </select>
+          </div>
+
+          <!-- Payment Status Dropdown -->
+          <div class="admin-form-group">
+            <label for="payment_status">Payment Status</label>
+            <select id="payment_status" name="payment_status" class="admin-select">
+              <option value="Pending" {% if order.payment_status == 'Pending' %}selected{% endif %}>Pending</option>
+              <option value="Advance Paid" {% if order.payment_status == 'Advance Paid' %}selected{% endif %}>Advance Paid (50%)</option>
+              <option value="Fully Paid" {% if order.payment_status == 'Fully Paid' %}selected{% endif %}>Fully Paid (100%)</option>
+            </select>
+          </div>
+
+          <!-- Final Price -->
+          <div class="admin-form-group">
+            <label for="final_price">Confirmed Final Price (₹)</label>
+            <input type="number" step="50" id="final_price" name="final_price" class="admin-input" value="{{ order.final_price|int if order.final_price else order.estimated_price|int }}">
+            <small style="color: var(--admin-text-muted); font-size: 0.75rem;">Initial estimate was ₹{{ "{:,.0f}".format(order.estimated_price or 0) }}</small>
+          </div>
+
+          <!-- Estimated Completion Date -->
+          <div class="admin-form-group">
+            <label for="estimated_completion_date">Estimated Completion Date</label>
+            <input type="date" id="estimated_completion_date" name="estimated_completion_date" class="admin-input" value="{{ order.estimated_completion_date or '' }}">
+            <small style="color: var(--admin-text-muted); font-size: 0.75rem;">Shown on customer Track Order screen</small>
+          </div>
+
+          <!-- Internal Admin Notes -->
+          <div class="admin-form-group">
+            <label for="admin_notes">Internal Admin Notes (Private)</label>
+            <textarea id="admin_notes" name="admin_notes" class="admin-textarea" rows="3" placeholder="Private notes, UPI transaction ID, courier tracking number, etc.">{{ order.admin_notes or '' }}</textarea>
+          </div>
+
+          <button type="submit" class="admin-btn admin-btn-primary" style="width: 100%; padding: 12px;">
+            Save Order Updates &rarr;
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

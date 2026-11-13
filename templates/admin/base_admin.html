@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Admin Dashboard | Vinit Mhatre Art{% endblock %}</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+
+  <!-- Admin Stylesheet -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="admin-body">
+
+  <!-- Admin Sidebar -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-brand-mark" style="overflow: hidden; padding: 0;">
+        <img src="{{ url_for('static', filename='images/logo_pvm.jpg') }}" alt="PVM Logo" style="width: 100%; height: 100%; object-fit: cover;">
+      </div>
+      <div class="sidebar-brand-title">
+        PVM ART WORKS
+        <small>VINIT MHATRE &bull; OWNER</small>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="{{ url_for('admin_dashboard') }}" class="{% if request.endpoint == 'admin_dashboard' %}active{% endif %}">
+        <span>&#128202;</span>
+        <span>Dashboard Overview</span>
+      </a>
+
+      <a href="{{ url_for('admin_orders') }}" class="{% if request.endpoint in ['admin_orders', 'admin_order_detail'] %}active{% endif %}">
+        <span>&#128230;</span>
+        <span>Manage Orders</span>
+      </a>
+
+      <a href="{{ url_for('admin_artworks') }}" class="{% if request.endpoint in ['admin_artworks', 'admin_artwork_new', 'admin_artwork_edit'] %}active{% endif %}">
+        <span>&#127912;</span>
+        <span>Manage Artworks</span>
+      </a>
+
+      <a href="{{ url_for('admin_categories') }}" class="{% if request.endpoint in ['admin_categories', 'admin_category_edit', 'admin_category_delete'] %}active{% endif %}">
+        <span>&#128193;</span>
+        <span>Art Categories</span>
+      </a>
+
+      <a href="{{ url_for('admin_homepage_images') }}" class="{% if request.endpoint in ['admin_homepage_images', 'admin_homepage_image_edit', 'admin_homepage_image_delete'] %}active{% endif %}">
+        <span>&#128444;</span>
+        <span>Home Page Images</span>
+      </a>
+
+      <a href="{{ url_for('admin_about') }}" class="{% if request.endpoint == 'admin_about' %}active{% endif %}">
+        <span>&#128100;</span>
+        <span>About Section</span>
+      </a>
+
+      <a href="{{ url_for('admin_customers') }}" class="{% if request.endpoint in ['admin_customers', 'admin_customer_detail'] %}active{% endif %}">
+        <span>&#128101;</span>
+        <span>Manage Customers</span>
+      </a>
+
+      <a href="{{ url_for('admin_reviews') }}" class="{% if request.endpoint == 'admin_reviews' %}active{% endif %}">
+        <span>&#9733;</span>
+        <span>Manage Reviews</span>
+      </a>
+
+      <a href="{{ url_for('admin_inquiries') }}" class="{% if request.endpoint == 'admin_inquiries' %}active{% endif %}">
+        <span>&#9993;</span>
+        <span>Inquiries</span>
+      </a>
+
+      <a href="{{ url_for('admin_languages') }}" class="{% if request.endpoint == 'admin_languages' %}active{% endif %}">
+        <span>&#127760;</span>
+        <span>Languages</span>
+      </a>
+
+      <a href="{{ url_for('admin_settings') }}" class="{% if request.endpoint == 'admin_settings' %}active{% endif %}">
+        <span>&#9881;</span>
+        <span>Website Settings</span>
+      </a>
+
+      <a href="{{ url_for('admin_account') }}" class="{% if request.endpoint == 'admin_account' %}active{% endif %}">
+        <span>&#128272;</span>
+        <span>My Account</span>
+      </a>
+
+      <div style="margin-top: 20px; padding: 10px 16px; border-top: 1px solid rgba(255,255,255,0.08);">
+        <a href="{{ url_for('home') }}" target="_blank" style="padding: 6px 0; color: #38BDF8;">
+          <span>&#8599;</span>
+          <span>View Live Website</span>
+        </a>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="admin-user-info">
+        <span class="admin-user-name">{{ session.get('admin_name', 'Vinit Mhatre') }}</span>
+        <span class="admin-user-role">Administrator</span>
+      </div>
+      <a href="{{ url_for('admin_logout') }}" title="Logout" style="color: #EF4444; font-size: 1.1rem;">
+        &#10162;
+      </a>
+    </div>
+  </aside>
+
+  <!-- Admin Main Content -->
+  <div class="admin-main">
+    <header class="admin-topbar">
+      <div class="topbar-title">{% block page_title %}Dashboard Overview{% endblock %}</div>
+      
+      <div class="topbar-actions">
+        <a href="{{ url_for('admin_artwork_new') }}" class="admin-btn admin-btn-primary">
+          + Add Artwork
+        </a>
+        <a href="{{ url_for('home') }}" target="_blank" class="admin-btn admin-btn-secondary">
+          Visit Site &rarr;
+        </a>
+      </div>
+    </header>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div style="padding: 20px 32px 0;">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }}" style="position: static; margin-bottom: 14px; animation: none;">
+              <span>{{ message }}</span>
+              <button class="alert-close">&times;</button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <main class="admin-content">
+      {% block admin_content %}{% endblock %}
+    </main>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

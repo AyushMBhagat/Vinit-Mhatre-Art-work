@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Contact & Studio Inquiry | Vinit Mhatre Art{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 50px; padding-bottom: 80px;">
+  <!-- Header -->
+  <div style="text-align: center; margin-bottom: 40px;">
+    <span class="eyebrow">Get In Touch</span>
+    <h1 class="section-title">Contact <span>Vinit Mhatre</span></h1>
+    <p class="section-lead" style="margin: 0 auto;">
+      Have a question about custom portraits, rangoli bookings for events, or customized canvas sizing? Send a message or chat on WhatsApp.
+    </p>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 50px; align-items: start;">
+    <!-- Left: Studio Details & Direct Chat Cards -->
+    <div>
+      <div style="background: var(--bg-card); border-radius: var(--radius-lg); padding: 36px; border: 1px solid var(--border-subtle); box-shadow: var(--shadow-md); margin-bottom: 30px;">
+        <h3 style="font-size: 1.3rem; margin-bottom: 20px;">Direct Communication</h3>
+
+        <!-- WhatsApp Card -->
+        <div style="background: #E8F8EE; border: 1px solid #A3E9B9; border-radius: var(--radius-md); padding: 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;">
+          <div>
+            <div style="font-weight: 700; color: #1E7E34; font-size: 1rem;">WhatsApp Chat</div>
+            <div style="font-size: 0.85rem; color: #2D6A4F;">Instant responses for bookings & photo reviews</div>
+          </div>
+          <a href="https://wa.me/{{ clean_whatsapp }}?text=Hello%20Vinit!%20I%20would%20like%20to%20inquire%20about%20your%20artwork." 
+             target="_blank" 
+             rel="noopener" 
+             class="btn btn-whatsapp btn-sm">
+            Chat Now &rarr;
+          </a>
+        </div>
+
+        <!-- Instagram Card -->
+        <div style="background: #FDF2F4; border: 1px solid #F5C6CB; border-radius: var(--radius-md); padding: 20px; margin-bottom: 28px; display: flex; align-items: center; justify-content: space-between;">
+          <div>
+            <div style="font-weight: 700; color: #A61E4D; font-size: 1rem;">Instagram Profile</div>
+            <div style="font-size: 0.85rem; color: #782D42;">Watch making videos, timelapses & sketches</div>
+          </div>
+          <a href="{{ site_settings.get('instagram_url', '#') }}" target="_blank" rel="noopener" class="btn btn-secondary btn-sm" style="border-color: #F5C6CB; color: #A61E4D;">
+            Follow &rarr;
+          </a>
+        </div>
+
+        <!-- Studio & Contact Info -->
+        <div style="border-top: 1px solid var(--border-subtle); padding-top: 24px;">
+          <h4 style="font-size: 1.05rem; margin-bottom: 14px;">Studio Details</h4>
+          <p style="font-size: 0.92rem; color: var(--text-body); line-height: 1.8; margin-bottom: 8px;">
+            <b>&#128205; Studio Address:</b><br>
+            {{ site_settings.get('studio_address', 'Panvel, Navi Mumbai, Maharashtra 410206, India') }}
+          </p>
+          <p style="font-size: 0.92rem; color: var(--text-body); line-height: 1.8; margin-bottom: 8px;">
+            <b>&#9993; Email:</b><br>
+            <a href="mailto:{{ site_settings.get('contact_email', 'contact@vinitmhatre.art') }}" style="color: var(--accent-terracotta);">
+              {{ site_settings.get('contact_email', 'contact@vinitmhatre.art') }}
+            </a>
+          </p>
+          <p style="font-size: 0.92rem; color: var(--text-body); line-height: 1.8;">
+            <b>&#128222; Phone / Mobile:</b><br>
+            {{ site_settings.get('contact_phone', '+91 98765 43210') }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Send an Inquiry Form -->
+    <div class="form-card">
+      <h3 style="font-size: 1.3rem; margin-bottom: 8px;">Send a Direct Message</h3>
+      <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 24px;">
+        Fill in the details below and Vinit will get back to you within 24 hours.
+      </p>
+
+      <form action="{{ url_for('contact') }}" method="POST">
+        <div class="form-group">
+          <label for="name">Your Name <span class="required">*</span></label>
+          <input type="text" id="name" name="name" class="form-control" placeholder="Your full name" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="email">Email Address <span class="required">*</span></label>
+            <input type="email" id="email" name="email" class="form-control" placeholder="your.email@example.com" required>
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Phone / WhatsApp Number</label>
+            <input type="tel" id="phone" name="phone" class="form-control" placeholder="10-digit mobile number">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="subject">Subject / Inquiry Type</label>
+          <input type="text" id="subject" name="subject" class="form-control" placeholder="E.g. Custom Portrait Inquiry / Wedding Rangoli Booking">
+        </div>
+
+        <div class="form-group">
+          <label for="message">Your Message / Idea <span class="required">*</span></label>
+          <textarea id="message" name="message" class="form-control" rows="5" placeholder="Tell us what you have in mind, size preferences, required date..." required></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">
+          Send Message &rarr;
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

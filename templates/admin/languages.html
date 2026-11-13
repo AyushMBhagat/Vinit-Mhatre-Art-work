@@ -1,0 +1,82 @@
+{% extends "admin/base_admin.html" %}
+
+{% block page_title %}Language Management{% endblock %}
+
+{% block admin_content %}
+<div class="admin-card" style="margin-bottom: 28px;">
+  <div class="admin-card-header">
+    <h3 class="admin-card-title">&#127760; Multi-Language System Overview</h3>
+    <span style="background: rgba(59,130,246,0.1); color: #3B82F6; font-size: 0.75rem; padding: 4px 10px; border-radius: 20px; font-weight: 700; border: 1px solid rgba(59,130,246,0.2);">
+      3 Languages Active
+    </span>
+  </div>
+  <div style="padding: 28px;">
+    <div style="padding: 14px 18px; background: rgba(59,130,246,0.06); border: 1px solid rgba(59,130,246,0.2); border-radius: 8px; margin-bottom: 24px; font-size: 0.9rem; color: #1E40AF;">
+      <b>How Language Switching Works:</b> Visitors can switch languages using the <b>EN | मराठी | हिंदी</b> buttons in the website header. The selected language is saved in their browser session and cookie — it persists even after page refresh. All navigation, buttons, headings, form labels, artwork sections, reviews, contact page, and footer are translated.
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;">
+      {% for lang in languages %}
+      <div style="background: {% if lang.default %}rgba(217,83,47,0.04){% else %}#FAFBFC{% endif %}; border: 2px solid {% if lang.default %}var(--admin-primary){% else %}var(--admin-border){% endif %}; border-radius: 12px; padding: 24px; text-align: center;">
+        <div style="font-size: 2.5rem; margin-bottom: 8px;">
+          {% if lang.code == 'en' %}🇬🇧
+          {% elif lang.code == 'mr' %}🇮🇳
+          {% elif lang.code == 'hi' %}🇮🇳
+          {% endif %}
+        </div>
+        <h3 style="font-size: 1.1rem; color: var(--admin-text-main); margin-bottom: 4px;">{{ lang.name }}</h3>
+        <div style="font-size: 1.3rem; color: var(--admin-text-muted); margin-bottom: 10px;">{{ lang.native }}</div>
+        
+        {% if lang.default %}
+          <span style="display: inline-block; background: var(--admin-primary); color: white; font-size: 0.72rem; padding: 3px 10px; border-radius: 20px; font-weight: 700; margin-bottom: 10px;">DEFAULT</span>
+        {% endif %}
+        
+        <div style="background: rgba(16,185,129,0.1); color: #065F46; border-radius: 8px; padding: 10px; margin-top: 10px;">
+          <div style="font-size: 0.75rem; color: var(--admin-text-muted);">Translation Keys</div>
+          <div style="font-size: 1.5rem; font-weight: 700; color: #10B981;">{{ lang.keys }}</div>
+        </div>
+
+        <div style="margin-top: 14px; font-size: 0.8rem; color: var(--admin-text-muted);">
+          URL: <code>/set-language/{{ lang.code }}</code>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<div class="admin-card">
+  <div class="admin-card-header">
+    <h3 class="admin-card-title">Translation Coverage Summary</h3>
+  </div>
+  <div style="padding: 28px;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+      {% set sections = [
+        ('Navigation', 'nav_home, nav_artwork, nav_about, nav_order, nav_track, nav_reviews, nav_contact', '&#128204;'),
+        ('Hero Section', 'hero_title, hero_desc, hero_btn_order, hero_trust_*', '&#127968;'),
+        ('Art Categories', 'cat_eyebrow, cat_title, cat_view_collection', '&#127912;'),
+        ('Featured Works', 'feat_title, btn_details, btn_order_now, price_on_request', '&#11088;'),
+        ('How It Works', 'proc_step1 to proc_step4', '&#128203;'),
+        ('Reviews', 'rev_eyebrow, rev_badge_verified, rev_all_btn', '&#11088;'),
+        ('Custom Order Form', 'order_label_*, order_btn_submit, order_disclaimer', '&#128221;'),
+        ('Track Order', 'track_stage_* (6 stages), track_title', '&#128269;'),
+        ('About Page', 'about_*, about_step1 to about_step4', '&#128100;'),
+        ('Contact Page', 'contact_wa, contact_insta, contact_studio', '&#128222;'),
+        ('Footer', 'footer_nav, footer_cats, footer_contact, footer_rights', '&#128218;'),
+        ('Artwork Detail', 'art_detail_price_label, art_detail_btn_order', '&#128444;'),
+      ] %}
+      {% for section_name, keys, icon in sections %}
+        <div style="background: #F8FAFC; border: 1px solid var(--admin-border); border-radius: 8px; padding: 14px;">
+          <div style="font-size: 1.3rem; margin-bottom: 6px;">{{ icon }}</div>
+          <div style="font-weight: 700; font-size: 0.88rem; color: var(--admin-text-main); margin-bottom: 4px;">{{ section_name }}</div>
+          <div style="font-size: 0.72rem; color: var(--admin-text-muted); font-family: monospace; line-height: 1.4;">{{ keys }}</div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div style="margin-top: 24px; padding: 16px; background: rgba(245, 158, 11, 0.07); border: 1px solid rgba(245,158,11,0.3); border-radius: 8px; font-size: 0.88rem; color: #92400E;">
+      <b>&#9888; To Add/Edit Translations:</b> Edit the file <code>translations.py</code> in the project root. Add new keys in all three language dictionaries (<code>en</code>, <code>mr</code>, <code>hi</code>) and use <code>{{ "{{" }} _('key_name') {{ "}}" }}</code> in templates to display translated text. The system automatically falls back to English if a key is missing in another language.
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,73 @@
+{% extends "admin/base_admin.html" %}
+
+{% block page_title %}Manage Customers & Collectors{% endblock %}
+
+{% block admin_content %}
+<div class="admin-card">
+  <div class="admin-card-header">
+    <div>
+      <h3 class="admin-card-title">Registered Customers ({{ customers|length }})</h3>
+      <small style="color: var(--admin-text-muted);">Clients who have placed custom artwork commissions</small>
+    </div>
+  </div>
+
+  <div class="admin-table-responsive">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Customer Name</th>
+          <th>Mobile Number</th>
+          <th>Email Address</th>
+          <th>Delivery Address</th>
+          <th>Total Orders</th>
+          <th>Total Commission (₹)</th>
+          <th>Last Order</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if customers %}
+          {% for c in customers %}
+            <tr>
+              <td>
+                <b>{{ c.name }}</b>
+              </td>
+              <td>
+                <a href="https://wa.me/{{ c.phone }}" target="_blank" style="color: var(--admin-primary); font-weight: 600;">
+                  {{ c.phone }}
+                </a>
+              </td>
+              <td>
+                <small>{{ c.email or 'Not provided' }}</small>
+              </td>
+              <td style="max-width: 240px;">
+                <small style="color: var(--admin-text-muted);">{{ c.address or 'Studio Pickup / N/A' }}</small>
+              </td>
+              <td>
+                <span class="badge badge-indigo">{{ c.total_orders }} Order(s)</span>
+              </td>
+              <td>
+                <b>₹{{ "{:,.0f}".format(c.total_spent or 0) }}</b>
+              </td>
+              <td>
+                <small style="color: var(--admin-text-muted);">{{ c.last_order_date|date_str if c.last_order_date else 'N/A' }}</small>
+              </td>
+              <td>
+                <a href="{{ url_for('admin_customer_detail', customer_id=c.id) }}" class="admin-btn admin-btn-secondary" style="font-size: 0.78rem; padding: 4px 10px;">
+                  View History &rarr;
+                </a>
+              </td>
+            </tr>
+          {% endfor %}
+        {% else %}
+          <tr>
+            <td colspan="8" style="text-align: center; color: var(--admin-text-muted); padding: 40px;">
+              No customers in database yet.
+            </td>
+          </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

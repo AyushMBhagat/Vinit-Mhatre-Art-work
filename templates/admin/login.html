@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login | Vinit Mhatre Art</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body style="background: #1B2130; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px;">
+
+  <div style="background: #FFFFFF; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); max-width: 440px; width: 100%; padding: 40px;">
+    
+    <div style="text-align: center; margin-bottom: 28px;">
+      <div style="width: 54px; height: 54px; background: #D9532F; color: #FFFFFF; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-family: var(--font-heading); font-weight: 700; margin: 0 auto 14px;">
+        V
+      </div>
+      <h2 style="font-size: 1.6rem; color: #1E293B; margin-bottom: 6px;">Artist Admin Portal</h2>
+      <p style="font-size: 0.88rem; color: #64748B;">Enter your credentials to manage orders and artworks</p>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div style="margin-bottom: 20px;">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }}" style="position: static; margin-bottom: 8px; animation: none;">
+              <span>{{ message }}</span>
+              <button class="alert-close">&times;</button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <form action="{{ url_for('admin_login', next=request.args.get('next')) }}" method="POST">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" class="form-control" placeholder="Enter username" required autofocus>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" class="form-control" placeholder="Enter password" required>
+      </div>
+
+      <div style="margin-top: 24px;">
+        <button type="submit" class="btn btn-primary" style="width: 100%; border-radius: 8px;">
+          Log In to Dashboard &rarr;
+        </button>
+      </div>
+    </form>
+
+    <!-- Demo Credentials Box -->
+    <div style="margin-top: 24px; padding: 14px; background: #FAF6F0; border: 1px dashed #E05A36; border-radius: 8px; font-size: 0.82rem; color: #4A4656;">
+      <b style="color: #D9532F;">&#128273; Demo Admin Credentials:</b><br>
+      <b>Username:</b> <code>admin</code><br>
+      <b>Password:</b> <code>Admin@VinitArt2026</code>
+    </div>
+
+    <div style="text-align: center; margin-top: 24px;">
+      <a href="{{ url_for('home') }}" style="color: #64748B; font-size: 0.85rem;">
+        &larr; Back to Public Website
+      </a>
+    </div>
+
+  </div>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

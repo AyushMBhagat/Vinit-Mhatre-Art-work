@@ -1,0 +1,188 @@
+{% extends "admin/base_admin.html" %}
+
+{% block page_title %}Dashboard Overview{% endblock %}
+
+{% block admin_content %}
+<!-- Overview Stats Grid -->
+<div class="stats-grid">
+  <!-- Total Orders -->
+  <div class="stat-card">
+    <div class="stat-info">
+      <div class="stat-label">Total Orders</div>
+      <div class="stat-value">{{ stats.total }}</div>
+    </div>
+    <div class="stat-icon blue">&#128230;</div>
+  </div>
+
+  <!-- New Orders -->
+  <div class="stat-card">
+    <div class="stat-info">
+      <div class="stat-label">New Orders</div>
+      <div class="stat-value">{{ stats.new }}</div>
+    </div>
+    <div class="stat-icon orange">&#127775;</div>
+  </div>
+
+  <!-- In Progress -->
+  <div class="stat-card">
+    <div class="stat-info">
+      <div class="stat-label">In Progress</div>
+      <div class="stat-value">{{ stats.in_progress }}</div>
+    </div>
+    <div class="stat-icon amber">&#9998;</div>
+  </div>
+
+  <!-- Completed Orders -->
+  <div class="stat-card">
+    <div class="stat-info">
+      <div class="stat-label">Completed</div>
+      <div class="stat-value">{{ stats.completed }}</div>
+    </div>
+    <div class="stat-icon green">&#10003;</div>
+  </div>
+
+  <!-- Total Artworks -->
+  <div class="stat-card">
+    <div class="stat-info">
+      <div class="stat-label">Catalog Artworks</div>
+      <div class="stat-value">{{ stats.artworks_count }}</div>
+    </div>
+    <div class="stat-icon purple">&#127912;</div>
+  </div>
+
+  <!-- Pending Reviews -->
+  <div class="stat-card">
+    <div class="stat-info">
+      <div class="stat-label">Pending Reviews</div>
+      <div class="stat-value">{{ stats.pending_reviews }}</div>
+    </div>
+    <div class="stat-icon amber">&#9733;</div>
+  </div>
+</div>
+
+<!-- Recent Orders Section -->
+<div class="admin-card">
+  <div class="admin-card-header">
+    <h3 class="admin-card-title">Recent Customer Orders</h3>
+    <a href="{{ url_for('admin_orders') }}" class="admin-btn admin-btn-secondary" style="font-size: 0.82rem; padding: 6px 14px;">
+      View All Orders &rarr;
+    </a>
+  </div>
+
+  <div class="admin-table-responsive">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Order Code</th>
+          <th>Customer</th>
+          <th>Artwork / Category</th>
+          <th>Size & Framing</th>
+          <th>Estimate / Final</th>
+          <th>Status</th>
+          <th>Date</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if recent_orders %}
+          {% for ord in recent_orders %}
+            <tr>
+              <td>
+                <b style="color: var(--admin-primary);">{{ ord.order_code }}</b>
+              </td>
+              <td>
+                <div><b>{{ ord.customer_name }}</b></div>
+                <small style="color: var(--admin-text-muted);">{{ ord.customer_phone }}</small>
+              </td>
+              <td>
+                <span>{{ ord.category }}</span>
+              </td>
+              <td>
+                <small>{{ ord.size_canvas }}</small>
+              </td>
+              <td>
+                <b>₹{{ "{:,.0f}".format(ord.final_price or ord.estimated_price or 0) }}</b>
+              </td>
+              <td>
+                <span class="status-pill status-{{ ord.status.lower().replace(' ', '-').replace('/', '-') }}">
+                  {{ ord.status }}
+                </span>
+              </td>
+              <td>
+                <small style="color: var(--admin-text-muted);">{{ ord.created_at|date_str }}</small>
+              </td>
+              <td>
+                <a href="{{ url_for('admin_order_detail', order_id=ord.id) }}" class="admin-btn admin-btn-secondary" style="font-size: 0.78rem; padding: 4px 10px;">
+                  Manage &rarr;
+                </a>
+              </td>
+            </tr>
+          {% endfor %}
+        {% else %}
+          <tr>
+            <td colspan="8" style="text-align: center; color: var(--admin-text-muted); padding: 30px;">
+              No customer orders received yet.
+            </td>
+          </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Pending Reviews Card -->
+{% if pending_reviews %}
+  <div class="admin-card">
+    <div class="admin-card-header">
+      <h3 class="admin-card-title">Reviews Awaiting Approval ({{ pending_reviews|length }})</h3>
+      <a href="{{ url_for('admin_reviews', status='pending') }}" class="admin-btn admin-btn-secondary" style="font-size: 0.82rem; padding: 6px 14px;">
+        All Reviews &rarr;
+      </a>
+    </div>
+
+    <div class="admin-table-responsive">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Customer</th>
+            <th>Rating</th>
+            <th>Category</th>
+            <th>Comment</th>
+            <th>Date</th>
+            <th>Quick Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for rev in pending_reviews %}
+            <tr>
+              <td><b>{{ rev.customer_name }}</b></td>
+              <td>
+                <span style="color: #F59E0B;">{% for _ in range(rev.rating) %}&#9733;{% endfor %}</span>
+              </td>
+              <td>{{ rev.category or 'Custom Art' }}</td>
+              <td style="max-width: 320px;">
+                <p style="margin: 0; font-size: 0.88rem;">"{{ rev.comment }}"</p>
+              </td>
+              <td><small>{{ rev.created_at|date_str }}</small></td>
+              <td>
+                <div style="display: flex; gap: 6px;">
+                  <form action="{{ url_for('admin_review_action', review_id=rev.id, action='approve') }}" method="POST" style="display: inline;">
+                    <button type="submit" class="admin-btn admin-btn-success" style="font-size: 0.75rem; padding: 4px 8px;">
+                      &#10003; Approve
+                    </button>
+                  </form>
+                  <form action="{{ url_for('admin_review_action', review_id=rev.id, action='reject') }}" method="POST" style="display: inline;">
+                    <button type="submit" class="admin-btn admin-btn-danger" style="font-size: 0.75rem; padding: 4px 8px;">
+                      Reject
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endif %}
+{% endblock %}

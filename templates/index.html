@@ -1,0 +1,263 @@
+{% extends "base.html" %}
+
+{% block title %}Vinit Mhatre | {{ _('hero_title') }} {{ _('hero_title_span') }}{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div class="hero-content">
+        <span class="eyebrow">&#10024; {{ _('hero_eyebrow') }}</span>
+        <h1>{{ _('hero_title') }}<br><span>{{ _('hero_title_span') }}</span></h1>
+        <p class="hero-desc">
+          {{ _('hero_desc') }}
+        </p>
+        <div class="hero-actions">
+          <a href="{{ url_for('custom_order') }}" class="btn btn-primary btn-lg">
+            {{ _('hero_btn_order') }}
+          </a>
+          <a href="{{ url_for('artworks') }}" class="btn btn-secondary btn-lg">
+            {{ _('hero_btn_explore') }}
+          </a>
+        </div>
+        <div class="hero-trust-badges">
+          <div class="trust-item">
+            <span class="icon">&#10003;</span>
+            <span>{{ _('hero_trust_hand') }}</span>
+          </div>
+          <div class="trust-item">
+            <span class="icon">&#10003;</span>
+            <span>{{ _('hero_trust_wip') }}</span>
+          </div>
+          <div class="trust-item">
+            <span class="icon">&#10003;</span>
+            <span>{{ _('hero_trust_shipping') }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="art-composition">
+          {% if homepage_images and homepage_images|length > 1 %}
+            <div class="composition-card-back">
+              <img src="{{ url_for('static', filename='images/' + homepage_images[1].image_path) if not homepage_images[1].image_path.startswith('uploads/') else url_for('static', filename=homepage_images[1].image_path) }}" alt="{{ homepage_images[1].title }}">
+            </div>
+            <div class="composition-card-front">
+              <img src="{{ url_for('static', filename='images/' + homepage_images[0].image_path) if not homepage_images[0].image_path.startswith('uploads/') else url_for('static', filename=homepage_images[0].image_path) }}" alt="{{ homepage_images[0].title }}">
+            </div>
+            <div class="composition-badge">
+              <span>&#9733;</span> {{ homepage_images[0].badge_text or _('badge_certified') }}
+            </div>
+          {% elif homepage_images and homepage_images|length == 1 %}
+            <div class="composition-card-front" style="position: relative; transform: none; width: 100%; max-width: 380px;">
+              <img src="{{ url_for('static', filename='images/' + homepage_images[0].image_path) if not homepage_images[0].image_path.startswith('uploads/') else url_for('static', filename=homepage_images[0].image_path) }}" alt="{{ homepage_images[0].title }}">
+            </div>
+            <div class="composition-badge">
+              <span>&#9733;</span> {{ homepage_images[0].badge_text or _('badge_certified') }}
+            </div>
+          {% else %}
+            <div class="composition-card-back">
+              <img src="{{ url_for('static', filename='images/vinit_artworks/durga_vishwakarma_rangoli.jpg') }}" alt="Vinit Mhatre Artwork">
+            </div>
+            <div class="composition-card-front">
+              <img src="{{ url_for('static', filename='images/vinit_artworks/traditional_couple_framed.jpg') }}" alt="Vinit Mhatre Artwork">
+            </div>
+            <div class="composition-badge">
+              <span>&#9733;</span> {{ _('badge_certified') }}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Artwork Categories Section (Dynamic from Database) -->
+<section class="section" style="background-color: var(--bg-subtle); border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle);">
+  <div class="container">
+    <div style="text-align: center; margin-bottom: 50px;">
+      <span class="eyebrow">{{ _('cat_eyebrow') }}</span>
+      <h2 class="section-title">{{ _('cat_title') }} <span>{{ _('cat_title_span') }}</span></h2>
+      <p class="section-lead" style="margin: 0 auto;">
+        {{ _('cat_lead') }}
+      </p>
+    </div>
+
+    <div class="categories-grid">
+      {% for cat in all_categories %}
+        <a href="{{ url_for('artworks', category=cat.name) }}" class="category-card">
+          <div class="category-icon">{{ cat.icon }}</div>
+          <h3>{{ cat.name }}</h3>
+          <p>{{ cat.description }}</p>
+          <span class="category-link">{{ _('cat_view_collection') }}</span>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Featured Artworks Section -->
+<section class="section">
+  <div class="container">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; flex-wrap: wrap; gap: 20px;">
+      <div>
+        <span class="eyebrow">{{ _('feat_eyebrow') }}</span>
+        <h2 class="section-title">{{ _('feat_title') }} <span>{{ _('feat_title_span') }}</span></h2>
+        <p class="section-lead" style="margin-bottom: 0;">{{ _('feat_lead') }}</p>
+      </div>
+      <a href="{{ url_for('artworks') }}" class="btn btn-secondary">{{ _('feat_btn_all') }}</a>
+    </div>
+
+    <div class="artwork-grid">
+      {% for art in featured_artworks %}
+        <article class="artwork-card">
+          <div class="artwork-image-wrap">
+            <img src="{{ url_for('static', filename='images/' + art.image_path) if not art.image_path.startswith('uploads/') else url_for('static', filename=art.image_path) }}" alt="{{ art.title }}">
+            <span class="artwork-category-badge">{{ art.category }}</span>
+          </div>
+          <div class="artwork-card-body">
+            <h3>{{ art.title }}</h3>
+            <div class="artwork-meta">
+              <span>&#128207; {{ art.dimensions }}</span>
+              <span>&bull;</span>
+              <span>&#127912; {{ art.medium }}</span>
+            </div>
+            <p>{{ art.description }}</p>
+            <div class="artwork-footer">
+              <div class="artwork-price">
+                {% if art.show_price and art.price > 0 %}
+                  <span>{{ _('price_starting_from') }}</span>
+                  <b>₹{{ "{:,.0f}".format(art.price) }}</b>
+                {% else %}
+                  <span class="badge-price-request">{{ _('price_on_request') }}</span>
+                {% endif %}
+              </div>
+              <div class="artwork-actions">
+                <a href="{{ url_for('artwork_detail', artwork_id=art.id) }}" class="btn btn-secondary btn-sm">{{ _('btn_details') }}</a>
+                <a href="{{ url_for('custom_order', category=art.category, artwork_id=art.id) }}" class="btn btn-primary btn-sm">{{ _('btn_order_now') }}</a>
+              </div>
+            </div>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="section process-section">
+  <div class="container">
+    <div style="text-align: center; margin-bottom: 50px;">
+      <span class="eyebrow">{{ _('proc_eyebrow') }}</span>
+      <h2 class="section-title">{{ _('proc_title') }} <span>{{ _('proc_title_span') }}</span></h2>
+      <p class="section-lead" style="margin: 0 auto;">
+        {{ _('proc_lead') }}
+      </p>
+    </div>
+
+    <div class="process-grid">
+      <div class="process-card">
+        <div class="process-number">01</div>
+        <h3>{{ _('proc_step1_title') }}</h3>
+        <p>{{ _('proc_step1_desc') }}</p>
+      </div>
+
+      <div class="process-card">
+        <div class="process-number">02</div>
+        <h3>{{ _('proc_step2_title') }}</h3>
+        <p>{{ _('proc_step2_desc') }}</p>
+      </div>
+
+      <div class="process-card">
+        <div class="process-number">03</div>
+        <h3>{{ _('proc_step3_title') }}</h3>
+        <p>{{ _('proc_step3_desc') }}</p>
+      </div>
+
+      <div class="process-card">
+        <div class="process-number">04</div>
+        <h3>{{ _('proc_step4_title') }}</h3>
+        <p>{{ _('proc_step4_desc') }}</p>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 40px;">
+      <a href="{{ url_for('custom_order') }}" class="btn btn-primary btn-lg">{{ _('hero_btn_order') }}</a>
+    </div>
+  </div>
+</section>
+
+<!-- Customer Reviews Section -->
+<section class="section">
+  <div class="container">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; flex-wrap: wrap; gap: 20px;">
+      <div>
+        <span class="eyebrow">{{ _('rev_eyebrow') }}</span>
+        <h2 class="section-title">{{ _('rev_title') }} <span>{{ _('rev_title_span') }}</span></h2>
+        <p class="section-lead" style="margin-bottom: 0;">{{ _('rev_lead') }}</p>
+      </div>
+      <a href="{{ url_for('reviews') }}" class="btn btn-secondary">{{ _('rev_all_btn') }}</a>
+    </div>
+
+    <div class="reviews-grid">
+      {% for rev in reviews %}
+        <div class="review-card">
+          <div class="review-stars">
+            {% for _ in range(rev.rating) %}&#9733;{% endfor %}
+          </div>
+          <p class="review-quote">"{{ rev.comment }}"</p>
+          <div class="review-author">
+            <div class="author-info">
+              <h4>{{ rev.customer_name }}</h4>
+              <span>{{ rev.category }}</span>
+            </div>
+            <span class="badge badge-emerald">&#10003; {{ _('rev_badge_verified') }}</span>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Contact & WhatsApp Strip -->
+<section class="section" style="background: linear-gradient(135deg, #1D2A4A 0%, #2A3B60 100%); color: #FFFFFF; padding: 70px 0;">
+  <div class="container">
+    <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 40px; align-items: center;">
+      <div>
+        <span class="eyebrow" style="color: #F5C94D;">{{ _('contact_eyebrow') }}</span>
+        <h2 class="section-title" style="color: #FFFFFF;">{{ _('cta_title') }}</h2>
+        <p style="color: #CBD5E0; font-size: 1.05rem; margin-bottom: 30px; line-height: 1.6;">
+          {{ _('cta_desc') }}
+        </p>
+        <div style="display: flex; flex-wrap: wrap; gap: 16px;">
+          <a href="https://wa.me/{{ clean_whatsapp }}?text=Hello%20Vinit!%20I%20would%20like%20to%20discuss%20a%20custom%20artwork." 
+             target="_blank" 
+             rel="noopener" 
+             class="btn btn-whatsapp btn-lg">
+            &#128172; {{ _('contact_btn_whatsapp') }}
+          </a>
+          <a href="{{ url_for('contact') }}" class="btn btn-secondary btn-lg" style="background: rgba(255,255,255,0.1); color:#FFFFFF; border-color: rgba(255,255,255,0.3);">
+            {{ _('nav_contact') }} &rarr;
+          </a>
+        </div>
+      </div>
+
+      <div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: var(--radius-lg); padding: 32px; backdrop-filter: blur(10px);">
+        <h3 style="color: #FFFFFF; font-size: 1.3rem; margin-bottom: 16px;">{{ _('contact_studio_title') }}</h3>
+        <p style="font-size: 0.95rem; color: #E2E8F0; margin-bottom: 12px; line-height: 1.6;">
+          <b>{{ _('about_name_label') }}:</b> {{ site_settings.get('artist_name', 'Vinit Mhatre') }}<br>
+          <b>{{ _('contact_label_addr') }}</b> {{ site_settings.get('studio_address', 'Panvel, Navi Mumbai, India') }}<br>
+          <b>{{ _('about_skills_title') }}:</b> Graphite, Charcoal, Colour Pencil, Rangoli, Watercolour<br>
+          <b>{{ _('track_stage_shipped') }}:</b> {{ _('footer_tagline') }}
+        </p>
+        <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.15);">
+          <a href="{{ site_settings.get('instagram_url', '#') }}" target="_blank" rel="noopener" style="color: #F5C94D; font-weight: 600; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 6px;">
+            {{ _('contact_insta_title') }} &rarr;
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

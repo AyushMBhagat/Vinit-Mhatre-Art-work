@@ -1,0 +1,100 @@
+{% extends "admin/base_admin.html" %}
+
+{% block page_title %}Customer Profile: {{ customer.name }}{% endblock %}
+
+{% block admin_content %}
+<div style="margin-bottom: 24px;">
+  <a href="{{ url_for('admin_customers') }}" class="admin-btn admin-btn-secondary" style="font-size: 0.82rem; padding: 6px 14px;">
+    &larr; Back to Customers Directory
+  </a>
+</div>
+
+<!-- Customer Profile Card -->
+<div class="admin-card" style="margin-bottom: 28px;">
+  <div class="admin-card-header">
+    <h3 class="admin-card-title">Customer Contact Details</h3>
+    <a href="https://wa.me/{{ customer.phone }}" target="_blank" class="admin-btn admin-btn-whatsapp" style="font-size: 0.82rem; padding: 6px 12px;">
+      &#128172; Open WhatsApp Chat
+    </a>
+  </div>
+  <div style="padding: 24px;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; font-size: 0.92rem;">
+      <div>
+        <span style="color: var(--admin-text-muted); font-size: 0.78rem; text-transform: uppercase;">Full Name</span>
+        <div style="font-size: 1.15rem; font-weight: 700;">{{ customer.name }}</div>
+      </div>
+      <div>
+        <span style="color: var(--admin-text-muted); font-size: 0.78rem; text-transform: uppercase;">Mobile / Phone</span>
+        <div style="font-weight: 600;">{{ customer.phone }}</div>
+      </div>
+      <div>
+        <span style="color: var(--admin-text-muted); font-size: 0.78rem; text-transform: uppercase;">Email Address</span>
+        <div>{{ customer.email or 'None provided' }}</div>
+      </div>
+      <div>
+        <span style="color: var(--admin-text-muted); font-size: 0.78rem; text-transform: uppercase;">Delivery Address</span>
+        <div>{{ customer.address or 'Studio Pickup / N/A' }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Customer Order History Table -->
+<div class="admin-card">
+  <div class="admin-card-header">
+    <h3 class="admin-card-title">Order History ({{ orders|length }})</h3>
+  </div>
+  <div class="admin-table-responsive">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Order Code</th>
+          <th>Category</th>
+          <th>Size / Canvas</th>
+          <th>Final Price</th>
+          <th>Payment</th>
+          <th>Status</th>
+          <th>Date</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if orders %}
+          {% for o in orders %}
+            <tr>
+              <td>
+                <b style="color: var(--admin-primary); font-family: monospace;">{{ o.order_code }}</b>
+              </td>
+              <td>{{ o.category }}</td>
+              <td>{{ o.size_canvas }} ({{ o.num_faces }} faces)</td>
+              <td><b>₹{{ "{:,.0f}".format(o.final_price or o.estimated_price or 0) }}</b></td>
+              <td>
+                <span class="status-pill payment-{{ o.payment_status.lower().replace(' ', '-') }}">
+                  {{ o.payment_status }}
+                </span>
+              </td>
+              <td>
+                <span class="status-pill status-{{ o.status.lower().replace(' ', '-').replace('/', '-') }}">
+                  {{ o.status }}
+                </span>
+              </td>
+              <td><small>{{ o.created_at|date_str }}</small></td>
+              <td>
+                <a href="{{ url_for('admin_order_detail', order_id=o.id) }}" class="admin-btn admin-btn-secondary" style="font-size: 0.78rem; padding: 4px 10px;">
+                  Manage Order &rarr;
+                </a>
+              </td>
+            </tr>
+          {% endfor %}
+        {% else %}
+          <tr>
+            <td colspan="8" style="text-align: center; color: var(--admin-text-muted); padding: 30px;">
+              No orders found for this customer.
+            </td>
+          </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Explore pencil portraits, colour drawings, rangoli and watercolour paintings by artist Vinit Mhatre. Request custom artwork.">
+  <meta name="theme-color" content="#17152b">
+  <title>Vinit Mhatre | Artist & Custom Artwork</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="#home" aria-label="Vinit Mhatre home">
+      <span class="brand-mark">V</span>
+      <span>VINIT <b>MHATRE</b><small>ARTIST • CREATOR</small></span>
+    </a>
+    <button class="menu-toggle" id="menuToggle" aria-label="Open navigation" aria-expanded="false">☰</button>
+    <nav class="nav" id="mainNav">
+      <a href="#home">Home</a>
+      <a href="#artwork">Artwork</a>
+      <a href="#about">About</a>
+      <a href="#order">Custom Order</a>
+      <a class="nav-cta" href="#order">Let's create <span>↗</span></a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="hero-bg-shape shape-one"></div>
+      <div class="hero-bg-shape shape-two"></div>
+      <div class="hero-content">
+        <p class="eyebrow"><span class="eyebrow-line"></span> INDEPENDENT ARTIST • CUSTOM CREATIONS</p>
+        <h1>Art that makes<br><span>you feel something.</span></h1>
+        <p class="hero-copy">From detailed pencil portraits to vibrant colour art and traditional rangoli — every creation begins with imagination.</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#artwork">Explore artwork <span>↘</span></a>
+          <a class="text-link" href="#order">Request a custom piece <span>↗</span></a>
+        </div>
+        <div class="hero-note"><span class="note-dot"></span> Made with patience, detail and creativity.</div>
+      </div>
+      <div class="hero-art" aria-label="Decorative artwork collage">
+        <div class="art-frame frame-back"><img src="images/hero-watercolour.svg" alt="Watercolour art placeholder"></div>
+        <div class="art-frame frame-front"><img src="images/hero-portrait.svg" alt="Pencil portrait art placeholder"></div>
+        <div class="art-sticker">MADE<br>BY HAND <span>✳</span></div>
+        <div class="hero-scribble">✳</div>
+      </div>
+      <div class="hero-bottom"><span>SCROLL TO EXPLORE</span><span class="scroll-line"></span><span>01 / 04</span></div>
+    </section>
+
+    <section class="intro-strip">
+      <p>ONE ARTIST. MANY WAYS TO CREATE.</p>
+      <div><span>✳</span> Pencil portraits <i>•</i> Colour drawings <i>•</i> Rangoli <i>•</i> Watercolour <i>•</i> More</div>
+    </section>
+
+    <section class="section artwork-section" id="artwork">
+      <div class="section-heading">
+        <div><p class="eyebrow">THE COLLECTION</p><h2>A little bit of<br><span>every kind of art.</span></h2></div>
+        <p class="section-description">Explore different styles and creations. Every piece shown here can be a starting point for your own custom request.</p>
+      </div>
+      <div class="filter-bar" role="group" aria-label="Filter artwork">
+        <button class="filter-btn active" data-filter="all">All work</button>
+        <button class="filter-btn" data-filter="pencil">Pencil portraits</button>
+        <button class="filter-btn" data-filter="colour">Colour drawings</button>
+        <button class="filter-btn" data-filter="rangoli">Rangoli</button>
+        <button class="filter-btn" data-filter="watercolour">Watercolour</button>
+        <button class="filter-btn" data-filter="other">Other art</button>
+      </div>
+      <div class="art-grid" id="artGrid">
+        <article class="art-card" data-category="pencil">
+          <div class="art-image"><img src="images/pencil-portrait-1.svg" alt="Pencil portrait placeholder"><span class="art-number">01</span></div>
+          <div class="art-card-info"><div><h3>Pencil Portraits</h3><p>Fine details • Graphite</p></div><span class="arrow-round">↗</span></div>
+        </article>
+        <article class="art-card" data-category="colour">
+          <div class="art-image"><img src="images/colour-drawing-1.svg" alt="Colour drawing placeholder"><span class="art-number">02</span></div>
+          <div class="art-card-info"><div><h3>Colour Drawings</h3><p>Bright ideas • Colour</p></div><span class="arrow-round">↗</span></div>
+        </article>
+        <article class="art-card" data-category="rangoli">
+          <div class="art-image"><img src="images/rangoli-1.svg" alt="Rangoli art placeholder"><span class="art-number">03</span></div>
+          <div class="art-card-info"><div><h3>Rangoli Art</h3><p>Patterns • Tradition</p></div><span class="arrow-round">↗</span></div>
+        </article>
+        <article class="art-card" data-category="watercolour">
+          <div class="art-image"><img src="images/watercolour-1.svg" alt="Watercolour painting placeholder"><span class="art-number">04</span></div>
+          <div class="art-card-info"><div><h3>Watercolour</h3><p>Soft shades • Expression</p></div><span class="arrow-round">↗</span></div>
+        </article>
+        <article class="art-card" data-category="other">
+          <div class="art-image"><img src="images/other-art-1.svg" alt="Other artwork placeholder"><span class="art-number">05</span></div>
+          <div class="art-card-info"><div><h3>Other Creations</h3><p>Experiments • Imagination</p></div><span class="arrow-round">↗</span></div>
+        </article>
+        <article class="art-card" data-category="pencil">
+          <div class="art-image"><img src="images/pencil-portrait-2.svg" alt="Custom pencil sketch placeholder"><span class="art-number">06</span></div>
+          <div class="art-card-info"><div><h3>Custom Sketches</h3><p>Personal • Made to order</p></div><span class="arrow-round">↗</span></div>
+        </article>
+      </div>
+      <p class="gallery-tip"><span>✳</span> These are temporary placeholders. Replace them with Vinit's actual artwork photos before publishing.</p>
+    </section>
+
+    <section class="quote-band">
+      <span class="quote-mark">“</span>
+      <p>Every blank page is a new possibility.<br><em>Every stroke adds a little life.</em></p>
+      <span class="quote-credit">— VINIT MHATRE</span>
+    </section>
+
+    <section class="section about-section" id="about">
+      <div class="about-visual">
+        <div class="about-image"><img src="images/about-artist.svg" alt="Artist workspace placeholder"></div>
+        <div class="about-stamp">CREATED<br>WITH ♥</div>
+      </div>
+      <div class="about-copy">
+        <p class="eyebrow">MEET THE ARTIST</p>
+        <h2>Hi, I'm <span>Vinit.</span></h2>
+        <p class="about-lead">I turn ideas, memories and inspiration into handmade art.</p>
+        <p>I'm an artist who enjoys exploring different forms of creativity — from detailed pencil portraits and colourful drawings to rangoli and watercolour paintings. I believe every artwork has its own story, and I love creating pieces that feel personal and meaningful.</p>
+        <p class="small-note">Add Vinit's real introduction, experience and artistic journey here. Keep it honest and in his own voice.</p>
+        <a class="text-link dark-link" href="#order">Let's create something together <span>↗</span></a>
+      </div>
+    </section>
+
+    <section class="process-section">
+      <div class="section-heading centered">
+        <p class="eyebrow">HOW IT WORKS</p>
+        <h2>Your idea, <span>made into art.</span></h2>
+        <p class="section-description">A simple process to request a custom creation.</p>
+      </div>
+      <div class="steps">
+        <div class="step"><span>01</span><h3>Share your idea</h3><p>Tell Vinit what you'd like and share a reference photo if needed.</p></div>
+        <div class="step"><span>02</span><h3>Discuss details</h3><p>Confirm the style, size, timeline and price directly with the artist.</p></div>
+        <div class="step"><span>03</span><h3>Artwork begins</h3><p>Vinit creates your artwork with care and attention to detail.</p></div>
+        <div class="step"><span>04</span><h3>Receive your art</h3><p>Coordinate pickup or delivery directly with Vinit.</p></div>
+      </div>
+    </section>
+
+    <section class="order-section" id="order">
+      <div class="order-copy">
+        <p class="eyebrow">LET'S MAKE SOMETHING PERSONAL</p>
+        <h2>Have an idea?<br><span>Let's bring it to life.</span></h2>
+        <p>Tell us a little about the artwork you have in mind. Submit the form to send your enquiry through WhatsApp, or contact Vinit directly.</p>
+        <div class="contact-note"><span class="contact-icon">✳</span><div><b>Prefer Instagram?</b><p>See recent work and send a message there too.</p><a id="instagramLink" href="#" target="_blank" rel="noopener">Visit Instagram ↗</a></div></div>
+      </div>
+      <form class="order-form" id="orderForm">
+        <h3>Custom artwork enquiry</h3>
+        <p class="form-subtitle">A few details to get started.</p>
+        <label for="customerName">Your name *</label>
+        <input id="customerName" name="customerName" type="text" placeholder="Enter your name" required>
+        <label for="customerPhone">Your phone number</label>
+        <input id="customerPhone" name="customerPhone" type="tel" inputmode="tel" placeholder="Enter your phone number">
+        <label for="artType">What would you like? *</label>
+        <select id="artType" name="artType" required>
+          <option value="">Select artwork type</option>
+          <option>Pencil portrait</option><option>Colour drawing</option><option>Rangoli</option>
+          <option>Watercolour painting</option><option>Other artwork</option>
+        </select>
+        <label for="size">Preferred size / details</label>
+        <input id="size" name="size" type="text" placeholder="E.g. A4, A3 or custom">
+        <label for="budget">Approximate budget (optional)</label>
+        <select id="budget" name="budget">
+          <option value="">Prefer to discuss</option>
+          <option>Under ₹500</option><option>₹500–₹1,000</option><option>₹1,000–₹2,000</option><option>₹2,000+</option>
+        </select>
+        <label for="message">Tell us about your idea *</label>
+        <textarea id="message" name="message" rows="4" placeholder="Describe the artwork, occasion or reference..." required></textarea>
+        <button class="button button-primary submit-button" type="submit">Send enquiry on WhatsApp <span>↗</span></button>
+        <p class="form-footnote">For portrait orders, send your reference photo in the WhatsApp chat after the message opens. No payment is taken on this website.</p>
+        <p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+
+    <section class="social-section">
+      <p class="eyebrow">FOLLOW THE CREATIVE JOURNEY</p>
+      <h2>More art. More <span>inspiration.</span></h2>
+      <p>Follow Vinit on Instagram for new artwork, behind-the-scenes videos and updates.</p>
+      <a class="button button-dark" id="instagramButton" href="#" target="_blank" rel="noopener">Follow on Instagram <span>↗</span></a>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <a class="brand footer-brand" href="#home"><span class="brand-mark">V</span><span>VINIT <b>MHATRE</b><small>ARTIST • CREATOR</small></span></a>
+    <p>Made with creativity and a little bit of colour. © <span id="year"></span> Vinit Mhatre.</p>
+    <a href="#home" class="back-top">BACK TO TOP ↑</a>
+  </footer>
+
+  <a class="floating-whatsapp" id="whatsappFloat" href="#" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">☏</a>
+  <script src="script.js"></script>
+</body>
+</html>

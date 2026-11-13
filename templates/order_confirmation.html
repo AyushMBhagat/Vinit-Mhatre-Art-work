@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Order Confirmed #{{ order.order_code }} | Vinit Mhatre Art{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 60px; padding-bottom: 90px; max-width: 820px;">
+  <div style="background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border-subtle); box-shadow: var(--shadow-lg); padding: 48px; text-align: center;">
+    
+    <!-- Success Icon -->
+    <div style="width: 72px; height: 72px; background: #E6F4EA; color: #137333; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.4rem; margin: 0 auto 20px;">
+      &#10003;
+    </div>
+
+    <span class="eyebrow" style="color: var(--accent-emerald);">Submission Successful</span>
+    <h1 style="font-size: 2.2rem; margin-bottom: 12px;">Thank You, {{ order.customer_name }}!</h1>
+    <p style="color: var(--text-muted); font-size: 1.05rem; max-width: 580px; margin: 0 auto 30px;">
+      Your custom artwork commission request has been recorded in our system. Save your Order ID below to track the progress of your handcrafted piece.
+    </p>
+
+    <!-- Prominent Order ID Card -->
+    <div style="background: var(--bg-subtle); border: 2px dashed var(--accent-terracotta); border-radius: var(--radius-md); padding: 24px; max-width: 480px; margin: 0 auto 36px;">
+      <span style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); font-weight: 700;">Your Unique Order ID</span>
+      <div style="font-family: var(--font-heading); font-size: 2.4rem; font-weight: 700; color: var(--accent-terracotta); margin: 6px 0;">
+        {{ order.order_code }}
+      </div>
+      <button type="button" class="btn btn-secondary btn-sm" id="copyOrderIdBtn" data-code="{{ order.order_code }}">
+        &#128203; Copy Order ID
+      </button>
+    </div>
+
+    <!-- Order Summary Box -->
+    <div style="text-align: left; background: #FFFFFF; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 24px; margin-bottom: 36px;">
+      <h3 style="font-size: 1.15rem; margin-bottom: 16px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 8px;">
+        Commission Summary
+      </h3>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; font-size: 0.92rem;">
+        <div><b>Category:</b> {{ order.category }}</div>
+        <div><b>Size:</b> {{ order.size_canvas }}</div>
+        <div><b>Faces / Subjects:</b> {{ order.num_faces }}</div>
+        <div><b>Framing:</b> {{ order.framing }}</div>
+        <div><b>Estimated Price:</b> <span style="color: var(--accent-terracotta); font-weight: 700;">₹{{ "{:,.0f}".format(order.estimated_price) }}</span></div>
+        <div><b>Status:</b> <span class="badge badge-indigo">{{ order.status }}</span></div>
+        <div style="grid-column: span 2;"><b>Description:</b> {{ order.description }}</div>
+        {% if order.reference_photo %}
+          <div style="grid-column: span 2; margin-top: 10px;">
+            <b>Attached Reference:</b>
+            <div style="margin-top: 8px; width: 120px; height: 120px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-subtle);">
+              <img src="{{ url_for('static', filename='uploads/references/' + order.reference_photo) }}" alt="Reference thumbnail" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 16px;">
+      <!-- WhatsApp Message Button -->
+      <a href="https://wa.me/{{ clean_whatsapp }}?text=Hello%20Vinit!%20I%20have%20placed%20a%20custom%20order%20%23{{ order.order_code }}%20for%20a%20{{ order.category }}%20on%20your%20website.%20My%20name%20is%20{{ order.customer_name }}." 
+         target="_blank" 
+         rel="noopener" 
+         class="btn btn-whatsapp btn-lg">
+        &#128172; Notify Vinit on WhatsApp
+      </a>
+
+      <!-- Track Order Direct Link -->
+      <a href="{{ url_for('track_order', order_code=order.order_code, phone=order.customer_phone) }}" class="btn btn-secondary btn-lg">
+        Track Progress Timeline &rarr;
+      </a>
+    </div>
+
+    <div style="margin-top: 30px;">
+      <a href="{{ url_for('home') }}" style="color: var(--text-muted); font-size: 0.9rem;">
+        &larr; Return to Homepage
+      </a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

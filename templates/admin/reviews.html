@@ -1,0 +1,107 @@
+{% extends "admin/base_admin.html" %}
+
+{% block page_title %}Manage Customer Reviews & Testimonials{% endblock %}
+
+{% block admin_content %}
+<!-- Review Status Filter Tabs -->
+<div style="display: flex; gap: 8px; margin-bottom: 24px;">
+  <a href="{{ url_for('admin_reviews', status='all') }}" class="admin-btn {% if current_status == 'all' %}admin-btn-primary{% else %}admin-btn-secondary{% endif %}" style="font-size: 0.82rem; padding: 6px 14px;">
+    All Reviews
+  </a>
+  <a href="{{ url_for('admin_reviews', status='pending') }}" class="admin-btn {% if current_status == 'pending' %}admin-btn-primary{% else %}admin-btn-secondary{% endif %}" style="font-size: 0.82rem; padding: 6px 14px;">
+    Pending Verification
+  </a>
+  <a href="{{ url_for('admin_reviews', status='approved') }}" class="admin-btn {% if current_status == 'approved' %}admin-btn-primary{% else %}admin-btn-secondary{% endif %}" style="font-size: 0.82rem; padding: 6px 14px;">
+    Approved & Published
+  </a>
+  <a href="{{ url_for('admin_reviews', status='rejected') }}" class="admin-btn {% if current_status == 'rejected' %}admin-btn-primary{% else %}admin-btn-secondary{% endif %}" style="font-size: 0.82rem; padding: 6px 14px;">
+    Rejected
+  </a>
+</div>
+
+<div class="admin-card">
+  <div class="admin-card-header">
+    <div>
+      <h3 class="admin-card-title">Reviews ({{ reviews|length }})</h3>
+      <small style="color: var(--admin-text-muted);">Approve authentic client reviews before they appear on the public website</small>
+    </div>
+  </div>
+
+  <div class="admin-table-responsive">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Customer</th>
+          <th>Rating</th>
+          <th>Medium / Category</th>
+          <th>Review Comment</th>
+          <th>Status</th>
+          <th>Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if reviews %}
+          {% for r in reviews %}
+            <tr>
+              <td><b>{{ r.customer_name }}</b></td>
+              <td>
+                <span style="color: #F59E0B; font-size: 0.95rem;">
+                  {% for _ in range(r.rating) %}&#9733;{% endfor %}
+                </span>
+              </td>
+              <td>
+                <span class="badge badge-terracotta">{{ r.category or 'Custom Art' }}</span>
+              </td>
+              <td style="max-width: 360px;">
+                <p style="margin: 0; font-size: 0.88rem; line-height: 1.5;">"{{ r.comment }}"</p>
+              </td>
+              <td>
+                {% if r.is_approved == 1 %}
+                  <span class="status-pill status-ready">&#10003; Published</span>
+                {% elif r.is_approved == 0 %}
+                  <span class="status-pill status-progress">&#9679; Pending</span>
+                {% else %}
+                  <span class="status-pill status-cancelled">&times; Rejected</span>
+                {% endif %}
+              </td>
+              <td><small style="color: var(--admin-text-muted);">{{ r.created_at|date_str }}</small></td>
+              <td>
+                <div style="display: flex; gap: 6px;">
+                  {% if r.is_approved != 1 %}
+                    <form action="{{ url_for('admin_review_action', review_id=r.id, action='approve') }}" method="POST" style="display: inline;">
+                      <button type="submit" class="admin-btn admin-btn-success" style="font-size: 0.75rem; padding: 4px 8px;">
+                        Approve
+                      </button>
+                    </form>
+                  {% endif %}
+
+                  {% if r.is_approved != -1 %}
+                    <form action="{{ url_for('admin_review_action', review_id=r.id, action='reject') }}" method="POST" style="display: inline;">
+                      <button type="submit" class="admin-btn admin-btn-secondary" style="font-size: 0.75rem; padding: 4px 8px; color: #EF4444;">
+                        Reject
+                      </button>
+                    </form>
+                  {% endif %}
+
+                  <form action="{{ url_for('admin_review_action', review_id=r.id, action='delete') }}" method="POST" style="display: inline;">
+                    <button type="submit" class="admin-btn admin-btn-danger btn-confirm-delete" style="font-size: 0.75rem; padding: 4px 8px;">
+                      Delete
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        {% else %}
+          <tr>
+            <td colspan="7" style="text-align: center; color: var(--admin-text-muted); padding: 40px;">
+              No reviews found in this category.
+            </td>
+          </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

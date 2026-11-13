@@ -1,0 +1,120 @@
+{% extends "admin/base_admin.html" %}
+
+{% block page_title %}{% if artwork %}Edit Artwork: {{ artwork.title }}{% else %}Add New Artwork{% endif %}{% endblock %}
+
+{% block admin_content %}
+<div class="admin-card" style="max-width: 820px; margin: 0 auto;">
+  <div class="admin-card-header">
+    <h3 class="admin-card-title">
+      {% if artwork %}Edit Artwork Details{% else %}New Artwork Submission{% endif %}
+    </h3>
+    <a href="{{ url_for('admin_artworks') }}" class="admin-btn admin-btn-secondary" style="font-size: 0.82rem; padding: 6px 14px;">
+      &larr; Back to Catalog
+    </a>
+  </div>
+
+  <div style="padding: 32px;">
+    <form action="{% if artwork %}{{ url_for('admin_artwork_edit', artwork_id=artwork.id) }}{% else %}{{ url_for('admin_artwork_new') }}{% endif %}" method="POST" enctype="multipart/form-data">
+      
+      <!-- Title -->
+      <div class="admin-form-group">
+        <label for="title">Artwork Title <span class="required">*</span></label>
+        <input type="text" id="title" name="title" class="admin-input" placeholder="E.g. Hyper-realistic Graphite Master Portrait" required value="{{ artwork.title if artwork else '' }}">
+      </div>
+
+      <!-- Category & Price -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <div class="admin-form-group">
+          <label for="category">Category <span class="required">*</span></label>
+          <select id="category" name="category" class="admin-select" required>
+            <option value="">-- Select Category --</option>
+            {% for cat in all_categories %}
+              <option value="{{ cat.name }}" {% if artwork and artwork.category == cat.name %}selected{% endif %}>
+                {{ cat.icon }} {{ cat.name }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="admin-form-group">
+          <label for="price">Base Starting Price (₹) <span class="required">*</span></label>
+          <input type="number" step="50" min="0" id="price" name="price" class="admin-input" placeholder="E.g. 1800" required value="{{ artwork.price|int if artwork else '1500' }}">
+        </div>
+      </div>
+
+      <!-- Medium & Dimensions -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <div class="admin-form-group">
+          <label for="medium">Medium / Materials</label>
+          <input type="text" id="medium" name="medium" class="admin-input" placeholder="E.g. Graphite & Charcoal on Cartridge" value="{{ artwork.medium if artwork else '' }}">
+        </div>
+
+        <div class="admin-form-group">
+          <label for="dimensions">Dimensions / Surface</label>
+          <input type="text" id="dimensions" name="dimensions" class="admin-input" placeholder="E.g. A4 (8.3 x 11.7 in)" value="{{ artwork.dimensions if artwork else '' }}">
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="admin-form-group">
+        <label for="description">Artwork Description</label>
+        <textarea id="description" name="description" class="admin-textarea" rows="4" placeholder="Detail the techniques, inspiration, time spent, and visual nuances...">{{ artwork.description if artwork else '' }}</textarea>
+      </div>
+
+      <!-- Artwork Image File Upload & Preview -->
+      <div class="admin-form-group">
+        <label for="artwork_image">Artwork Image File (PNG, JPG, WEBP)</label>
+        <input type="file" id="artwork_image" name="image" class="admin-input" accept="image/png, image/jpeg, image/webp">
+        
+        <div style="margin-top: 14px; display: flex; align-items: center; gap: 20px;">
+          <div>
+            <small style="display: block; color: var(--admin-text-muted); margin-bottom: 6px;">Image Preview:</small>
+            <div style="width: 140px; height: 160px; border-radius: 8px; overflow: hidden; border: 1px solid var(--admin-border); background: #eee;">
+              <img id="artwork_image_preview" 
+                   src="{% if artwork %}{{ url_for('static', filename='images/' + artwork.image_path) if not artwork.image_path.startswith('uploads/') else url_for('static', filename=artwork.image_path) }}{% else %}#{% endif %}" 
+                   alt="Preview" 
+                   style="width: 100%; height: 100%; object-fit: cover; {% if not artwork %}display: none;{% endif %}">
+            </div>
+          </div>
+          {% if artwork %}
+            <small style="color: var(--admin-text-muted);">
+              Current image: <code>{{ artwork.image_path }}</code><br>
+              Leave file empty if you want to keep the current image.
+            </small>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Toggles: Featured, Available & Show Price -->
+      <div style="display: flex; gap: 30px; margin: 24px 0; padding: 16px 20px; background: #F8FAFC; border-radius: 8px; border: 1px solid var(--admin-border); flex-wrap: wrap;">
+        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 0.92rem; font-weight: 600;">
+          <input type="checkbox" name="is_featured" value="1" {% if artwork and artwork.is_featured %}checked{% endif %} style="width: 18px; height: 18px;">
+          <span>&#9733; Feature on Homepage Gallery</span>
+        </label>
+
+        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 0.92rem; font-weight: 600;">
+          <input type="checkbox" name="is_available" value="1" {% if not artwork or artwork.is_available %}checked{% endif %} style="width: 18px; height: 18px;">
+          <span>&#10003; Available for Custom Orders (Publicly Visible)</span>
+        </label>
+
+        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 0.92rem; font-weight: 600;">
+          <input type="checkbox" name="show_price" value="1" {% if not artwork or artwork.show_price %}checked{% endif %} style="width: 18px; height: 18px;">
+          <span>&#9654; Show Price on Public Website</span>
+        </label>
+      </div>
+      <div style="padding: 10px 16px; background: rgba(217,83,47,0.07); border-radius: 6px; border: 1px dashed rgba(217,83,47,0.3); font-size: 0.82rem; color: var(--admin-primary); margin-bottom: 20px;">
+        <b>Price Display Note:</b> If "Show Price" is unchecked, the public website will display "Price on Request" badge instead — no ₹0 or empty price will appear.
+      </div>
+
+      <!-- Action Buttons -->
+      <div style="display: flex; justify-content: flex-end; gap: 14px;">
+        <a href="{{ url_for('admin_artworks') }}" class="admin-btn admin-btn-secondary">Cancel</a>
+        <button type="submit" class="admin-btn admin-btn-primary" style="padding: 12px 28px;">
+          {% if artwork %}Save Artwork Changes{% else %}Add Artwork to Catalog{% endif %} &rarr;
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
+{% endblock %}

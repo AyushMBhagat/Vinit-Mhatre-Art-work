@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Client Reviews & Testimonials | Vinit Mhatre Art{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 50px; padding-bottom: 80px;">
+  <!-- Header -->
+  <div style="text-align: center; margin-bottom: 40px;">
+    <span class="eyebrow">Customer Voices</span>
+    <h1 class="section-title">Client <span>Reviews & Stories</span></h1>
+    <p class="section-lead" style="margin: 0 auto;">
+      Hear directly from families, couples, and art enthusiasts who commissioned custom handmade artwork from Vinit Mhatre.
+    </p>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1.3fr 0.7fr; gap: 40px; align-items: start;">
+    <!-- Left: Approved Reviews List -->
+    <div>
+      {% if reviews %}
+        <div class="reviews-grid" style="grid-template-columns: 1fr;">
+          {% for rev in reviews %}
+            <div class="review-card">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <div class="review-stars">
+                  {% for _ in range(rev.rating) %}&#9733;{% endfor %}
+                </div>
+                <span class="badge badge-indigo">{{ rev.category or 'Custom Art' }}</span>
+              </div>
+              <p class="review-quote">"{{ rev.comment }}"</p>
+              <div class="review-author">
+                <div class="author-info">
+                  <h4>{{ rev.customer_name }}</h4>
+                  <span>Reviewed on {{ rev.created_at|date_str }}</span>
+                </div>
+                <span class="badge badge-emerald">&#10003; Verified Order</span>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div style="background: var(--bg-card); padding: 40px; border-radius: var(--radius-md); text-align: center; border: 1px solid var(--border-subtle);">
+          <p style="color: var(--text-muted);">No reviews published yet. Be the first to share your experience!</p>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Right: Submit a Review Form -->
+    <div class="form-card" style="padding: 30px;">
+      <h3 style="font-size: 1.3rem; margin-bottom: 8px;">Share Your Experience</h3>
+      <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 20px;">
+        Did you receive a commissioned artwork from Vinit? We would love to hear your feedback!
+      </p>
+
+      <form action="{{ url_for('reviews') }}" method="POST">
+        <div class="form-group">
+          <label for="customer_name">Your Name <span class="required">*</span></label>
+          <input type="text" id="customer_name" name="customer_name" class="form-control" placeholder="E.g. Priya Sharma" required>
+        </div>
+
+        <div class="form-group">
+          <label for="order_code">Order ID (Optional)</label>
+          <input type="text" id="order_code" name="order_code" class="form-control" placeholder="E.g. VM-2026-1001">
+        </div>
+
+        <div class="form-group">
+          <label for="category">Artwork Category</label>
+          <select id="category" name="category" class="form-select">
+            <option value="">-- Select Category --</option>
+            {% for cat in artwork_categories %}
+              <option value="{{ cat }}">{{ cat }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="rating">Rating <span class="required">*</span></label>
+          <select id="rating" name="rating" class="form-select" required>
+            <option value="5" selected>&#9733;&#9733;&#9733;&#9733;&#9733; (5 Stars - Exceptional)</option>
+            <option value="4">&#9733;&#9733;&#9733;&#9733; (4 Stars - Very Good)</option>
+            <option value="3">&#9733;&#9733;&#9733; (3 Stars - Good)</option>
+            <option value="2">&#9733;&#9733; (2 Stars - Fair)</option>
+            <option value="1">&#9733; (1 Star - Poor)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="comment">Your Review / Testimonial <span class="required">*</span></label>
+          <textarea id="comment" name="comment" class="form-control" rows="4" placeholder="How did the portrait or artwork turn out? How was the likeness, framing, and delivery?" required></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%;">
+          Submit Review &rarr;
+        </button>
+
+        <p style="font-size: 0.78rem; color: var(--text-muted); text-align: center; margin-top: 12px;">
+          Note: To maintain authenticity, customer reviews are verified before being published.
+        </p>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

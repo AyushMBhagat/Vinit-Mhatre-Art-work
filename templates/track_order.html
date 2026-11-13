@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block title %}Track Your Artwork Order | Vinit Mhatre{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 50px; padding-bottom: 80px;">
+  <div style="text-align: center; margin-bottom: 40px;">
+    <span class="eyebrow">Real-Time Commission Tracking</span>
+    <h1 class="section-title">Track Your <span>Artwork Order</span></h1>
+    <p class="section-lead" style="margin: 0 auto;">
+      Enter your unique Order ID (e.g., VM-2026-1001) and your registered 10-digit mobile number to view live progress stages and updates.
+    </p>
+  </div>
+
+  <div class="track-container">
+    <!-- Search Form -->
+    <div class="track-search-card">
+      <form action="{{ url_for('track_order') }}" method="POST">
+        <div class="form-row">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label for="order_code">Order ID <span class="required">*</span></label>
+            <input type="text" id="order_code" name="order_code" class="form-control" placeholder="E.g. VM-2026-1001" required value="{{ order_code_input }}">
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0;">
+            <label for="phone">Registered Mobile Number <span class="required">*</span></label>
+            <input type="tel" id="phone" name="phone" class="form-control" placeholder="10-digit phone number" required value="{{ phone_input }}">
+          </div>
+        </div>
+
+        <div style="margin-top: 20px; text-align: center;">
+          <button type="submit" class="btn btn-primary btn-lg" style="min-width: 200px;">
+            Check Order Status &rarr;
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Order Timeline Result -->
+    {% if order %}
+      {% set stages = [
+        'Order Received',
+        'Order Confirmed',
+        'Work In Progress',
+        'Artwork Ready',
+        'Shipped / Ready for Pickup',
+        'Completed'
+      ] %}
+
+      {% set current_index = -1 %}
+      {% for s in stages %}
+        {% if s.lower() == order.status.lower() %}
+          {% set current_index = loop.index0 %}
+        {% endif %}
+      {% endfor %}
+
+      <div class="timeline-card">
+        <!-- Order Header -->
+        <div class="order-header-info">
+          <div>
+            <span style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); font-weight: 700;">Order ID</span>
+            <div class="order-code-display">{{ order.order_code }}</div>
+            <div style="font-size: 0.88rem; color: var(--text-muted);">
+              Placed on {{ order.created_at|date_str }} by <b>{{ order.customer_name }}</b>
+            </div>
+          </div>
+
+          <div style="text-align: right;">
+            <span class="badge badge-terracotta order-status-badge">
+              {{ order.status }}
+            </span>
+            <div style="font-size: 0.85rem; margin-top: 6px; color: var(--text-muted);">
+              Payment: <b>{{ order.payment_status }}</b>
+            </div>
+          </div>
+        </div>
+
+        <!-- Details Strip -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; background: var(--bg-subtle); padding: 18px 24px; border-radius: var(--radius-md); margin-bottom: 36px; border: 1px solid var(--border-subtle); font-size: 0.9rem;">
+          <div>
+            <span style="color: var(--text-muted); font-size: 0.78rem; text-transform: uppercase;">Artwork Category</span>
+            <div style="font-weight: 600;">{{ order.category }}</div>
+          </div>
+          <div>
+            <span style="color: var(--text-muted); font-size: 0.78rem; text-transform: uppercase;">Size & Framing</span>
+            <div style="font-weight: 600;">{{ order.size_canvas }} ({{ order.framing }})</div>
+          </div>
+          <div>
+            <span style="color: var(--text-muted); font-size: 0.78rem; text-transform: uppercase;">Subjects / Faces</span>
+            <div style="font-weight: 600;">{{ order.num_faces }} Face(s)</div>
+          </div>
+          <div>
+            <span style="color: var(--text-muted); font-size: 0.78rem; text-transform: uppercase;">Est. Completion Date</span>
+            <div style="font-weight: 600; color: var(--accent-terracotta);">
+              {{ order.estimated_completion_date or 'Under Review by Artist' }}
+            </div>
+          </div>
+        </div>
+
+        <!-- 6-Stage Progress Stepper -->
+        <h3 style="font-size: 1.15rem; margin-bottom: 24px;">Progress Journey</h3>
+        <div class="stepper-container">
+          {% for st in stages %}
+            {% set is_completed = (loop.index0 < current_index) or (order.status.lower() == 'completed') %}
+            {% set is_active = (loop.index0 == current_index) and (order.status.lower() != 'completed') %}
+            
+            <div class="step-item {% if is_completed %}completed{% elif is_active %}active{% else %}upcoming{% endif %}">
+              <div class="step-node">
+                {% if is_completed %}
+                  &#10003;
+                {% else %}
+                  {{ loop.index }}
+                {% endif %}
+              </div>
+              <div class="step-label">{{ st }}</div>
+            </div>
+          {% endfor %}
+        </div>
+
+        <!-- Milestones Log -->
+        <div style="margin-top: 40px; padding-top: 30px; border-top: 1px solid var(--border-subtle);">
+          <h3 style="font-size: 1.15rem; margin-bottom: 20px;">Detailed Status Updates</h3>
+          
+          {% if progress_history %}
+            <div class="milestones-feed">
+              {% for p in progress_history %}
+                <div class="milestone-item">
+                  <div class="milestone-date">{{ p.created_at|date_str }} &bull; Updated by {{ p.updated_by }}</div>
+                  <div class="milestone-title">{{ p.stage }}</div>
+                  {% if p.notes %}
+                    <div class="milestone-notes">{{ p.notes }}</div>
+                  {% endif %}
+                  {% if p.image_path %}
+                    <div style="margin-top: 12px; max-width: 340px; border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--border-subtle); box-shadow: var(--shadow-sm); background: #FAF6F0;">
+                      <a href="{{ url_for('static', filename=p.image_path) }}" target="_blank" title="Click to view full size">
+                        <img src="{{ url_for('static', filename=p.image_path) }}" alt="Work in progress photo" style="width: 100%; height: auto; max-height: 240px; object-fit: cover;">
+                      </a>
+                      <div style="padding: 6px 10px; font-size: 0.78rem; color: var(--text-muted); text-align: center; border-top: 1px solid var(--border-subtle);">
+                        &#128065; Work-in-Progress Photo from Vinit's Studio
+                      </div>
+                    </div>
+                  {% endif %}
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Initial order logged. Further progress milestones will appear as Vinit works on your piece.</p>
+          {% endif %}
+        </div>
+
+        <!-- Action / Contact Buttons -->
+        <div style="margin-top: 36px; padding-top: 24px; border-top: 1px solid var(--border-subtle); display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px;">
+          <div>
+            <a href="https://wa.me/{{ clean_whatsapp }}?text=Hello%20Vinit!%20I%20am%20checking%20status%20for%20order%20%23{{ order.order_code }}." 
+               target="_blank" 
+               rel="noopener" 
+               class="btn btn-whatsapp btn-sm">
+              &#128172; Query This Order on WhatsApp
+            </a>
+          </div>
+
+          {% if order.status.lower() == 'completed' %}
+            <div>
+              <a href="{{ url_for('reviews') }}" class="btn btn-primary btn-sm">
+                &#9733; Leave a Review for this Order &rarr;
+              </a>
+            </div>
+          {% endif %}
+        </div>
+
+      </div>
+    {% elif has_searched %}
+      <!-- Empty state handled by flash alert -->
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}
